@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/ProductCard";
 
@@ -40,14 +41,25 @@ export default async function HomePage() {
 
       <section className="container-page py-12">
         <h2 className="mb-6 font-display text-2xl text-leather-800">Разделы</h2>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
           {(categories ?? []).map((c) => (
             <Link
               key={c.slug}
               href={`/catalog/${c.slug}`}
-              className="card flex aspect-square flex-col items-center justify-center gap-2 p-4 text-center hover:bg-leather-50"
+              className="card group relative aspect-square overflow-hidden"
             >
-              <span className="font-medium text-leather-800">{c.name}</span>
+              {c.image_url ? (
+                <Image
+                  src={c.image_url}
+                  alt={c.name}
+                  fill
+                  className="object-cover transition group-hover:scale-105"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center bg-leather-100" />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0" />
+              <span className="absolute bottom-3 left-3 font-medium text-white">{c.name}</span>
             </Link>
           ))}
         </div>

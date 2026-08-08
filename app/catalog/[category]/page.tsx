@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/ProductCard";
@@ -25,13 +26,29 @@ export default async function CategoryPage({
     .order("created_at", { ascending: false });
 
   return (
-    <div className="container-page space-y-6 py-12">
-      <div>
-        <h1 className="font-display text-3xl text-leather-800">{category.name}</h1>
-        {category.description && (
-          <p className="mt-2 text-leather-600">{category.description}</p>
-        )}
-      </div>
+    <div className="space-y-6 pb-12">
+      {category.image_url && (
+        <div className="relative h-48 w-full overflow-hidden sm:h-64">
+          <Image src={category.image_url} alt={category.name} fill className="object-cover" priority />
+          <div className="absolute inset-0 bg-black/40" />
+          <div className="container-page absolute inset-0 flex flex-col justify-center">
+            <h1 className="font-display text-3xl text-white sm:text-4xl">{category.name}</h1>
+            {category.description && (
+              <p className="mt-2 max-w-xl text-white/90">{category.description}</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      <div className="container-page space-y-6">
+      {!category.image_url && (
+        <div>
+          <h1 className="font-display text-3xl text-leather-800">{category.name}</h1>
+          {category.description && (
+            <p className="mt-2 text-leather-600">{category.description}</p>
+          )}
+        </div>
+      )}
 
       {!products || products.length === 0 ? (
         <p className="text-leather-500">В этом разделе пока нет товаров.</p>
@@ -42,6 +59,7 @@ export default async function CategoryPage({
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

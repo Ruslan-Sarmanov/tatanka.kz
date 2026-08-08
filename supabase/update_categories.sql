@@ -1,4 +1,5 @@
--- Тестовые данные для tatanka.kz — выполнить после schema.sql
+-- Обновление разделов под реальный ассортимент tatanka.kz
+-- Выполнить один раз в Supabase → SQL Editor (на уже работающем сайте)
 
 insert into public.categories (slug, name, description, image_url, sort_order) values
   ('belts', 'Ремни', 'Кожаные ремни ручной работы под заказ', '/categories/remni.jpg', 1),
@@ -9,14 +10,12 @@ insert into public.categories (slug, name, description, image_url, sort_order) v
   ('document-covers', 'Обложки для документов', 'Обложки для документов ручной работы', '/categories/oblozhki-dokumenty.jpg', 6),
   ('card-holders', 'Картхолдеры', 'Картхолдеры из натуральной кожи', '/categories/kartholdery.jpg', 7),
   ('key-holders', 'Ключницы', 'Ключницы ручной работы', '/categories/klyuchnicy.jpg', 8)
-on conflict (slug) do nothing;
+on conflict (slug) do update set
+  name = excluded.name,
+  description = excluded.description,
+  image_url = excluded.image_url,
+  sort_order = excluded.sort_order;
 
-insert into public.products (slug, category_id, name, description, price, is_made_to_order, lead_time_days)
-select 'classic-belt-1', id, 'Ремень «Классик»', 'Ручная работа, растительное дубление, под заказ по размеру.', 18000, true, 10
-from public.categories where slug = 'belts'
-on conflict (slug) do nothing;
-
-insert into public.products (slug, category_id, name, description, price, is_made_to_order, lead_time_days)
-select 'bifold-wallet-1', id, 'Портмоне «Атбасар»', 'Компактное портмоне на 6 карт с монетницей.', 15000, true, 7
-from public.categories where slug = 'portmone'
-on conflict (slug) do nothing;
+-- Убираем старые разделы, которых больше нет в ассортименте
+-- (товары в них, если есть, не удаляются — просто останутся без раздела)
+delete from public.categories where slug in ('phone-cases', 'bracelets');
