@@ -3,6 +3,7 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import CartBadge from "@/components/CartBadge";
 import MobileNav from "@/components/MobileNav";
+import CatalogMenu from "@/components/CatalogMenu";
 
 export default async function Header() {
   const supabase = createClient();
@@ -39,15 +40,7 @@ export default async function Header() {
         </div>
 
         <nav className="hidden items-center gap-7 lg:flex">
-          {cats.map((cat) => (
-            <Link
-              key={cat.slug}
-              href={`/catalog/${cat.slug}`}
-              className="text-sm text-ink/80 transition hover:text-saddle-500"
-            >
-              {cat.name}
-            </Link>
-          ))}
+          <CatalogMenu categories={cats} />
         </nav>
 
         <div className="flex items-center gap-5">
