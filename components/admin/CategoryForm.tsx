@@ -6,12 +6,25 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import type { Category } from "@/lib/types";
 
+// Кириллица переводится в латиницу побуквенно — адрес раздела (slug)
+// всегда должен быть чистой латиницей, та же логика, что и в форме товара.
+const CYRILLIC_MAP: Record<string, string> = {
+  а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "e", ж: "zh", з: "z",
+  и: "i", й: "y", к: "k", л: "l", м: "m", н: "n", о: "o", п: "p", р: "r",
+  с: "s", т: "t", у: "u", ф: "f", х: "h", ц: "ts", ч: "ch", ш: "sh", щ: "sch",
+  ъ: "", ы: "y", ь: "", э: "e", ю: "yu", я: "ya",
+};
+
 function slugify(text: string) {
   return text
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9а-яё\s-]/gi, "")
-    .replace(/\s+/g, "-");
+    .split("")
+    .map((ch) => (ch in CYRILLIC_MAP ? CYRILLIC_MAP[ch] : ch))
+    .join("")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
 }
 
 export default function CategoryForm({ category }: { category?: Category }) {
