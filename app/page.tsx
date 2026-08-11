@@ -20,67 +20,118 @@ export default async function HomePage() {
 
   return (
     <div>
-      <section className="bg-leather-100">
-        <div className="container-page grid gap-8 py-16 md:grid-cols-2 md:items-center">
-          <div>
-            <h1 className="font-display text-4xl leading-tight text-leather-900 md:text-5xl">
-              Кожаные аксессуары ручной работы под заказ
+      {/* ---- Герой: тёмная кожа, крупная метка бизона, клеймо-заголовок ---- */}
+      <section className="relative overflow-hidden bg-ink">
+        <Image
+          src="/brand/bison-mark-light.png"
+          alt=""
+          width={900}
+          height={900}
+          className="pointer-events-none absolute -right-24 top-1/2 h-[520px] w-[520px] -translate-y-1/2 opacity-[0.07] md:h-[640px] md:w-[640px]"
+          aria-hidden
+        />
+        <div className="container-page relative py-20 md:py-28">
+          <div className="max-w-xl">
+            <span className="eyebrow text-saddle-300">Ручная работа · Под заказ · Казахстан</span>
+            <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.08] text-parchment md:text-6xl">
+              Кожа, которая
+              <br />
+              служит десятилетиями
             </h1>
-            <p className="mt-4 text-leather-700">
-              TATANKA.KZ — ремни, кошельки, сумки и другие изделия из натуральной кожи.
-              Каждое изделие изготавливается индивидуально под ваш заказ.
+            <div className="stitch-line mt-6 w-24" style={{ ["--stitch-color" as any]: "#C99A66" }} />
+            <p className="mt-6 max-w-md text-[15px] leading-relaxed text-parchment/65">
+              TATANKA — ремни, кошельки, сумки и другие аксессуары из натуральной кожи растительного
+              дубления. Каждое изделие вырезано, прошито и собрано вручную под ваш заказ.
             </p>
-            <div className="mt-6 flex gap-3">
-              <Link href="/catalog/belts" className="btn-primary">Смотреть каталог</Link>
-              <a href="#brand" className="btn-secondary">О бренде</a>
+            <div className="mt-9 flex flex-wrap gap-4">
+              <Link href="/catalog/belts" className="btn-primary">
+                Смотреть каталог
+              </Link>
+              <a href="#brand" className="btn-ghost-light">
+                О бренде
+              </a>
             </div>
           </div>
-          <div className="aspect-video rounded-lg bg-leather-200" />
         </div>
       </section>
 
-      <section className="container-page py-12">
-        <h2 className="mb-6 font-display text-2xl text-leather-800">Разделы</h2>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-          {(categories ?? []).map((c) => (
+      {/* ---- Разделы каталога ---- */}
+      <section className="container-page py-16 md:py-24">
+        <div className="mb-10 flex items-end justify-between gap-4">
+          <div>
+            <span className="eyebrow">Каталог</span>
+            <h2 className="mt-2 font-display text-2xl text-ink md:text-3xl">Разделы</h2>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 md:gap-5">
+          {(categories ?? []).map((cat) => (
             <Link
-              key={c.slug}
-              href={`/catalog/${c.slug}`}
-              className="card group relative aspect-square overflow-hidden"
+              key={cat.slug}
+              href={`/catalog/${cat.slug}`}
+              className="stitch-frame group relative aspect-square overflow-hidden rounded-sm bg-saddle-100"
             >
-              {c.image_url ? (
+              {cat.image_url ? (
                 <Image
-                  src={c.image_url}
-                  alt={c.name}
+                  src={cat.image_url}
+                  alt={cat.name}
                   fill
-                  className="object-cover transition group-hover:scale-105"
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                  className="object-cover transition duration-500 group-hover:scale-105"
                 />
               ) : (
-                <div className="flex h-full items-center justify-center bg-leather-100" />
+                <div className="flex h-full items-center justify-center bg-saddle-100" />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0" />
-              <span className="absolute bottom-3 left-3 font-medium text-white">{c.name}</span>
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/5 to-transparent" />
+              <span className="absolute bottom-4 left-4 font-display text-base text-parchment md:text-lg">
+                {cat.name}
+              </span>
             </Link>
           ))}
         </div>
       </section>
 
-      <section className="container-page py-12">
-        <h2 className="mb-6 font-display text-2xl text-leather-800">Новинки</h2>
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
-          {(products ?? []).map((p: any) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
-      </section>
+      {/* ---- Новинки ---- */}
+      {products && products.length > 0 && (
+        <section className="bg-card py-16 md:py-24">
+          <div className="container-page">
+            <div className="mb-10">
+              <span className="eyebrow">Свежая партия</span>
+              <h2 className="mt-2 font-display text-2xl text-ink md:text-3xl">Новинки</h2>
+            </div>
+            <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 md:gap-6">
+              {products.map((p: any) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
-      <section id="brand" className="bg-leather-100">
-        <div className="container-page py-16 text-center">
-          <h2 className="font-display text-2xl text-leather-800">О бренде</h2>
-          <p className="mx-auto mt-4 max-w-2xl text-leather-700">
-            Мы создаём аксессуары из натуральной кожи вручную — небольшими партиями
-            и на заказ, с вниманием к каждой детали.
-          </p>
+      {/* ---- О бренде ---- */}
+      <section id="brand" className="relative overflow-hidden bg-ink">
+        <div className="container-page grid gap-10 py-20 md:grid-cols-[auto_1fr] md:items-center md:py-28">
+          <Image
+            src="/brand/bison-mark-light.png"
+            alt=""
+            width={200}
+            height={200}
+            className="h-24 w-24 opacity-90 md:h-40 md:w-40"
+          />
+          <div className="max-w-xl">
+            <span className="eyebrow text-saddle-300">Наш подход</span>
+            <h2 className="mt-3 font-display text-2xl leading-snug text-parchment md:text-3xl">
+              Татанка — древнее слово для бизона: сила, выносливость, материал, который веками
+              служил людям.
+            </h2>
+            <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-parchment/60">
+              Мы работаем с кожей растительного дубления небольшими партиями и по индивидуальным
+              размерам. Никакого конвейера — каждое изделие проходит через руки одного мастера,
+              от раскроя до финальной прошивки.
+            </p>
+            <Link href="/catalog/belts" className="btn-ghost-light mt-8 inline-flex">
+              Смотреть изделия
+            </Link>
+          </div>
         </div>
       </section>
     </div>
