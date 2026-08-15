@@ -43,14 +43,14 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
 
   return (
     <form onSubmit={handleSubmit} className="card mx-auto max-w-md space-y-4 p-6">
-      <h1 className="font-display text-2xl text-leather-800">
+      <h1 className="font-display text-2xl text-ink">
         {mode === "login" ? "Вход в кабинет" : "Регистрация"}
       </h1>
 
       {mode === "register" && (
         <>
           <div>
-            <label className="mb-1 block text-sm text-leather-700">Имя</label>
+            <label className="mb-1 block text-sm text-ink/70">Имя</label>
             <input
               className="input-field"
               value={fullName}
@@ -59,7 +59,7 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm text-leather-700">Телефон</label>
+            <label className="mb-1 block text-sm text-ink/70">Телефон</label>
             <input
               className="input-field"
               value={phone}
@@ -71,7 +71,7 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
       )}
 
       <div>
-        <label className="mb-1 block text-sm text-leather-700">Email</label>
+        <label className="mb-1 block text-sm text-ink/70">Email</label>
         <input
           type="email"
           className="input-field"
@@ -82,7 +82,14 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-leather-700">Пароль</label>
+        <div className="mb-1 flex items-center justify-between">
+          <label className="text-sm text-ink/70">Пароль</label>
+          {mode === "login" && (
+            <a href="/forgot-password" className="text-xs text-saddle-500 underline">
+              Забыли пароль?
+            </a>
+          )}
+        </div>
         <input
           type="password"
           className="input-field"
@@ -99,7 +106,7 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
         {loading ? "Подождите…" : mode === "login" ? "Войти" : "Зарегистрироваться"}
       </button>
 
-      <p className="text-center text-sm text-leather-600">
+      <p className="text-center text-sm text-ink/60">
         {mode === "login" ? (
           <>Нет аккаунта? <a className="underline" href="/register">Зарегистрироваться</a></>
         ) : (
