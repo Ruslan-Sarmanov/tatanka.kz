@@ -26,10 +26,10 @@ export default function AddToCartForm({ product }: { product: Product }) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {product.is_made_to_order && (
         <div>
-          <label className="mb-1 block text-sm text-leather-700">
+          <label className="mb-1.5 block text-sm text-ink/70">
             Пожелания к изделию (размер, цвет, гравировка)
           </label>
           <textarea
@@ -43,17 +43,29 @@ export default function AddToCartForm({ product }: { product: Product }) {
       )}
 
       <div className="flex items-center gap-3">
-        <label className="text-sm text-leather-700">Количество</label>
-        <input
-          type="number"
-          min={1}
-          className="input-field w-20"
-          value={quantity}
-          onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
-        />
+        <label className="text-sm text-ink/70">Количество</label>
+        <div className="flex items-center rounded-sm border border-saddle-200 bg-card">
+          <button
+            type="button"
+            onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+            className="flex h-9 w-9 items-center justify-center text-ink/60 transition hover:text-saddle-500"
+            aria-label="Уменьшить количество"
+          >
+            −
+          </button>
+          <span className="w-8 text-center font-mono text-sm text-ink">{quantity}</span>
+          <button
+            type="button"
+            onClick={() => setQuantity((q) => q + 1)}
+            className="flex h-9 w-9 items-center justify-center text-ink/60 transition hover:text-saddle-500"
+            aria-label="Увеличить количество"
+          >
+            +
+          </button>
+        </div>
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         <button className="btn-primary" onClick={handleAdd}>
           Добавить в корзину
         </button>
