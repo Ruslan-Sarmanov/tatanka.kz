@@ -42,7 +42,7 @@ export default async function HomePage() {
             </h1>
             <div className="stitch-line mt-6 w-24" style={{ ["--stitch-color" as any]: "#C99A66" }} />
             <p className="mt-6 max-w-md text-[15px] leading-relaxed text-parchment/65">
-              TATANKA — ремни, кошельки, сумки и другие аксессуары из натуральной кожи растительного
+              TATANKA — кошельки, портмоне, сумки и другие аксессуары из натуральной кожи растительного
               дубления. Каждое изделие вырезано, прошито и собрано вручную под ваш заказ.
             </p>
             <div className="mt-9 flex flex-wrap gap-4">
