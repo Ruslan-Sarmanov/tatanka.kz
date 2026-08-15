@@ -29,6 +29,7 @@ export default async function HomePage() {
           alt=""
           width={900}
           height={900}
+          unoptimized
           className="pointer-events-none absolute -right-24 top-1/2 h-[520px] w-[520px] -translate-y-1/2 opacity-[0.07] md:h-[640px] md:w-[640px]"
           aria-hidden
         />
@@ -117,6 +118,7 @@ export default async function HomePage() {
             alt=""
             width={200}
             height={200}
+            unoptimized
             className="h-24 w-24 opacity-90 md:h-40 md:w-40"
           />
           <div className="max-w-xl">
