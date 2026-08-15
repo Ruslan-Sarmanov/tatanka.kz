@@ -120,7 +120,7 @@ export default function CategoryForm({ category }: { category?: Category }) {
           className="input-field"
           value={name}
           onChange={(e) => handleNameChange(e.target.value)}
-          placeholder="Например, Ремни"
+          placeholder="Например, Сумки"
           required
         />
       </div>
