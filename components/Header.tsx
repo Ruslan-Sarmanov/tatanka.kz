@@ -30,6 +30,7 @@ export default async function Header() {
               alt="TATANKA.KZ"
               width={40}
               height={40}
+              unoptimized
               className="h-9 w-9 md:h-10 md:w-10"
               priority
             />

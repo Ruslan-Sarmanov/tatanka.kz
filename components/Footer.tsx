@@ -16,7 +16,7 @@ export default async function Footer() {
       <div className="container-page grid gap-10 py-14 md:grid-cols-[1.3fr_1fr_1fr]">
         <div>
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/brand/bison-mark-light.png" alt="TATANKA.KZ" width={36} height={36} className="h-9 w-9" />
+            <Image src="/brand/bison-mark-light.png" alt="TATANKA.KZ" width={36} height={36} unoptimized className="h-9 w-9" />
             <span className="font-display text-lg font-semibold tracking-wideish text-parchment">
               TATANKA<span className="text-saddle-300">.KZ</span>
             </span>
