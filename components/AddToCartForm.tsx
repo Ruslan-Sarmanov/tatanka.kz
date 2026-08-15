@@ -37,7 +37,7 @@ export default function AddToCartForm({ product }: { product: Product }) {
             rows={3}
             value={customization}
             onChange={(e) => setCustomization(e.target.value)}
-            placeholder="Например: длина ремня 105 см, цвет тёмно-коричневый"
+            placeholder="Например: размер, цвет, гравировка на изделии"
           />
         </div>
       )}
