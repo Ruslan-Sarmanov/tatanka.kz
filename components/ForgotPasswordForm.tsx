@@ -15,7 +15,9 @@ export default function ForgotPasswordForm() {
     setError(null);
     setLoading(true);
 
-    const redirectTo = `${window.location.origin}/reset-password`;
+    // Письмо ведёт на /auth/callback — там код из ссылки обменивается на
+    // сессию, и только потом пользователь попадает на /reset-password.
+    const redirectTo = `${window.location.origin}/auth/callback?next=/reset-password`;
     const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
 
     setLoading(false);
