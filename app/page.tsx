@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/ProductCard";
+import PromoBanners from "@/components/PromoBanners";
 
 export default async function HomePage() {
   const supabase = createClient();
@@ -17,6 +18,12 @@ export default async function HomePage() {
     .eq("is_active", true)
     .order("created_at", { ascending: false })
     .limit(8);
+
+  const { data: banners } = await supabase
+    .from("banners")
+    .select("*")
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true });
 
   return (
     <div>
@@ -55,6 +62,8 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <PromoBanners banners={banners ?? []} />
 
       {/* ---- Разделы каталога ---- */}
       <section className="container-page py-16 md:py-24">
