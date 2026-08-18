@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import CartBadge from "@/components/CartBadge";
+import FavoritesBadge from "@/components/FavoritesBadge";
 import MobileNav from "@/components/MobileNav";
 import CatalogMenu from "@/components/CatalogMenu";
 
@@ -23,7 +24,7 @@ export default async function Header() {
     <header className="sticky top-0 z-40 border-b border-saddle-100 bg-parchment/95 backdrop-blur">
       <div className="container-page relative flex h-20 items-center justify-between gap-6">
         <div className="flex items-center gap-3">
-          <MobileNav categories={cats} />
+          <MobileNav categories={cats} isLoggedIn={!!user} />
           <Link href="/" className="flex shrink-0 items-center gap-3">
             <Image
               src="/brand/bison-mark-dark.png"
@@ -45,6 +46,7 @@ export default async function Header() {
         </nav>
 
         <div className="flex items-center gap-5">
+          <FavoritesBadge />
           <CartBadge />
           {user ? (
             <Link
