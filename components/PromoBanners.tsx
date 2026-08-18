@@ -22,7 +22,11 @@ export default function PromoBanners({ banners }: { banners: Banner[] }) {
 
   return (
     <section className="container-page py-8">
-      <div className="stitch-frame relative aspect-[16/5] w-full overflow-hidden rounded-sm bg-saddle-100">
+      {/* object-contain (не cover) — баннер показывается целиком, без
+          обрезки краёв, даже если пропорции загруженной картинки не
+          совпадают ровно с шириной блока. Тёмный фон-подложка того же
+          тона, что у героя, скрадывает возможные пустые поля по бокам. */}
+      <div className="stitch-frame relative h-56 w-full overflow-hidden rounded-sm bg-ink sm:h-72">
         {banners.map((banner, i) => (
           <Link
             key={banner.id}
@@ -38,7 +42,7 @@ export default function PromoBanners({ banners }: { banners: Banner[] }) {
               fill
               sizes="100vw"
               priority={i === 0}
-              className="object-cover"
+              className="object-contain"
             />
           </Link>
         ))}
