@@ -116,7 +116,8 @@ export default function BannerForm({ banner }: { banner?: Banner }) {
           <input type="file" accept="image/*" className="hidden" onChange={handleImagePick} disabled={uploading} />
         </label>
         <p className="mt-1 text-xs text-leather-500">
-          Рекомендуемое соотношение сторон — широкое, как баннер на главной (например 1600×500).
+          Изображение показывается целиком, без обрезки — подходит любое соотношение сторон,
+          но лучше смотрятся широкие горизонтальные фото (например 1600×600).
         </p>
       </div>
 
