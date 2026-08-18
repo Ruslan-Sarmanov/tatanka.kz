@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import type { Category, Product } from "@/lib/types";
 
@@ -28,6 +29,8 @@ function slugify(text: string) {
     .replace(/-+/g, "-");
 }
 
+type UploadedImage = { url: string; uploading?: boolean };
+
 export default function ProductForm({
   categories,
   product,
@@ -41,19 +44,80 @@ export default function ProductForm({
   const [name, setName] = useState(product?.name ?? "");
   const [categoryId, setCategoryId] = useState(product?.category_id ?? categories[0]?.id ?? "");
   const [description, setDescription] = useState(product?.description ?? "");
-  const [price, setPrice] = useState(product?.price ?? 0);
+  // Цена и срок изготовления хранятся как строки, а не числа. Раньше поле
+  // было value={price} (число) — при пустом/нулевом значении React рисовал
+  // в input "0", и при вводе цифры курсор оказывался ДО этого нуля
+  // (браузерная особенность number-инпутов), из-за чего первый введённый
+  // символ фактически дописывался позади "0" и терялся на вид, пока не
+  // ввести второй. Строковое состояние с очисткой нулей решает это.
+  const [priceStr, setPriceStr] = useState(product?.price != null ? String(product.price) : "");
   const [isMadeToOrder, setIsMadeToOrder] = useState(product?.is_made_to_order ?? true);
-  const [leadTimeDays, setLeadTimeDays] = useState(product?.lead_time_days ?? 14);
+  const [leadTimeStr, setLeadTimeStr] = useState(
+    product?.lead_time_days != null ? String(product.lead_time_days) : "14"
+  );
   const [isActive, setIsActive] = useState(product?.is_active ?? true);
-  const [images, setImages] = useState<string[]>(
-    product?.images?.map((i) => i.url) ?? [""]
+  const [images, setImages] = useState<UploadedImage[]>(
+    product?.images?.map((i) => ({ url: i.url })) ?? []
   );
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  function handleDigitsChange(setter: (v: string) => void) {
+    return (e: React.ChangeEvent<HTMLInputElement>) => {
+      // Оставляем только цифры — так поле никогда не рисует навязанный "0",
+      // и печатать можно сразу с первого нажатия.
+      setter(e.target.value.replace(/[^0-9]/g, ""));
+    };
+  }
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    e.target.value = ""; // разрешаем выбрать тот же файл повторно
+    if (files.length === 0) return;
+
+    const folder = product?.slug || slugify(name) || "misc";
+    const placeholders: UploadedImage[] = files.map(() => ({ url: "", uploading: true }));
+    setImages((prev) => [...prev, ...placeholders]);
+    const startIndex = images.length;
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const cleanName = file.name.replace(/[^a-zA-Z0-9.\-]/g, "_");
+      const path = `${folder}/${Date.now()}-${cleanName}`;
+
+      const { error: uploadError } = await supabase.storage.from("products").upload(path, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+      if (uploadError) {
+        setError(`Не удалось загрузить ${file.name}: ${uploadError.message}`);
+        setImages((prev) => prev.filter((_, idx) => idx !== startIndex + i));
+        continue;
+      }
+
+      const { data: publicUrlData } = supabase.storage.from("products").getPublicUrl(path);
+      setImages((prev) =>
+        prev.map((img, idx) =>
+          idx === startIndex + i ? { url: publicUrlData.publicUrl, uploading: false } : img
+        )
+      );
+    }
+  }
+
+  function removeImage(index: number) {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+
+    if (images.some((img) => img.uploading)) {
+      setError("Дождитесь окончания загрузки фото");
+      return;
+    }
+
     setLoading(true);
 
     const payload = {
@@ -61,9 +125,9 @@ export default function ProductForm({
       slug: product?.slug ?? slugify(name),
       category_id: categoryId || null,
       description,
-      price,
+      price: Number(priceStr) || 0,
       is_made_to_order: isMadeToOrder,
-      lead_time_days: leadTimeDays,
+      lead_time_days: isMadeToOrder ? Number(leadTimeStr) || 1 : null,
       is_active: isActive,
     };
 
@@ -87,8 +151,8 @@ export default function ProductForm({
     // Пересобираем список изображений
     await supabase.from("product_images").delete().eq("product_id", productId);
     const imageRows = images
-      .filter((url) => url.trim())
-      .map((url, i) => ({ product_id: productId, url, sort_order: i }));
+      .filter((img) => img.url.trim())
+      .map((img, i) => ({ product_id: productId, url: img.url, sort_order: i }));
     if (imageRows.length > 0) {
       await supabase.from("product_images").insert(imageRows);
     }
@@ -138,11 +202,12 @@ export default function ProductForm({
       <div>
         <label className="mb-1 block text-sm text-leather-700">Цена, ₸</label>
         <input
-          type="number"
+          type="text"
+          inputMode="numeric"
           className="input-field"
-          value={price}
-          onChange={(e) => setPrice(Number(e.target.value))}
-          min={0}
+          value={priceStr}
+          onChange={handleDigitsChange(setPriceStr)}
+          placeholder="0"
           required
         />
       </div>
@@ -161,11 +226,12 @@ export default function ProductForm({
         <div>
           <label className="mb-1 block text-sm text-leather-700">Срок изготовления, дней</label>
           <input
-            type="number"
+            type="text"
+            inputMode="numeric"
             className="input-field"
-            value={leadTimeDays}
-            onChange={(e) => setLeadTimeDays(Number(e.target.value))}
-            min={1}
+            value={leadTimeStr}
+            onChange={handleDigitsChange(setLeadTimeStr)}
+            placeholder="14"
           />
         </div>
       )}
@@ -181,27 +247,45 @@ export default function ProductForm({
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-leather-700">
-          Ссылки на изображения (URL из Supabase Storage)
-        </label>
-        {images.map((url, i) => (
+        <label className="mb-1 block text-sm text-leather-700">Фотографии товара</label>
+
+        {images.length > 0 && (
+          <div className="mb-3 grid grid-cols-3 gap-3 sm:grid-cols-4">
+            {images.map((img, i) => (
+              <div key={i} className="relative aspect-square overflow-hidden rounded border border-leather-200 bg-leather-50">
+                {img.uploading ? (
+                  <div className="flex h-full items-center justify-center text-xs text-leather-400">
+                    Загрузка…
+                  </div>
+                ) : (
+                  <Image src={img.url} alt="" fill className="object-cover" unoptimized />
+                )}
+                {!img.uploading && (
+                  <button
+                    type="button"
+                    onClick={() => removeImage(i)}
+                    aria-label="Удалить фото"
+                    className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-xs text-white hover:bg-black/80"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        <label className="btn-secondary inline-flex cursor-pointer items-center text-sm">
+          + Загрузить фото
           <input
-            key={i}
-            className="input-field mb-2"
-            value={url}
-            placeholder="https://…supabase.co/storage/v1/object/public/products/…"
-            onChange={(e) =>
-              setImages((prev) => prev.map((u, idx) => (idx === i ? e.target.value : u)))
-            }
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFileUpload}
+            className="hidden"
           />
-        ))}
-        <button
-          type="button"
-          className="text-sm underline text-leather-700"
-          onClick={() => setImages((prev) => [...prev, ""])}
-        >
-          + добавить ещё изображение
-        </button>
+        </label>
+        <p className="mt-1 text-xs text-leather-500">Можно выбрать сразу несколько файлов.</p>
       </div>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
