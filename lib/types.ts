@@ -14,6 +14,8 @@ export type Product = {
   name: string;
   description: string | null;
   price: number;
+  material: string | null;
+  color: string | null;
   is_made_to_order: boolean;
   lead_time_days: number | null;
   is_active: boolean;
