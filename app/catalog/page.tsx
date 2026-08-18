@@ -6,7 +6,14 @@ import CatalogFilters from "@/components/CatalogFilters";
 export default async function CatalogPage({
   searchParams,
 }: {
-  searchParams: { category?: string; material?: string; color?: string };
+  searchParams: {
+    category?: string;
+    material?: string;
+    color?: string;
+    gender?: string;
+    priceMin?: string;
+    priceMax?: string;
+  };
 }) {
   const supabase = createClient();
 
@@ -42,6 +49,12 @@ export default async function CatalogPage({
   }
   if (searchParams.material) query = query.eq("material", searchParams.material);
   if (searchParams.color) query = query.eq("color", searchParams.color);
+  if (searchParams.gender) query = query.eq("gender", searchParams.gender);
+
+  const priceMin = Number(searchParams.priceMin);
+  const priceMax = Number(searchParams.priceMax);
+  if (searchParams.priceMin && !Number.isNaN(priceMin)) query = query.gte("price", priceMin);
+  if (searchParams.priceMax && !Number.isNaN(priceMax)) query = query.lte("price", priceMax);
 
   const { data: products } = await query;
 
