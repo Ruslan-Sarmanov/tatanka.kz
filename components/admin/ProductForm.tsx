@@ -53,6 +53,7 @@ export default function ProductForm({
   const [priceStr, setPriceStr] = useState(product?.price != null ? String(product.price) : "");
   const [material, setMaterial] = useState(product?.material ?? "");
   const [color, setColor] = useState(product?.color ?? "");
+  const [gender, setGender] = useState<"" | "men" | "women" | "unisex">(product?.gender ?? "");
   const [isMadeToOrder, setIsMadeToOrder] = useState(product?.is_made_to_order ?? true);
   const [leadTimeStr, setLeadTimeStr] = useState(
     product?.lead_time_days != null ? String(product.lead_time_days) : "14"
@@ -130,6 +131,7 @@ export default function ProductForm({
       price: Number(priceStr) || 0,
       material: material.trim() || null,
       color: color.trim() || null,
+      gender: gender || null,
       is_made_to_order: isMadeToOrder,
       lead_time_days: isMadeToOrder ? Number(leadTimeStr) || 1 : null,
       is_active: isActive,
@@ -235,6 +237,20 @@ export default function ProductForm({
             placeholder="Например: тёмно-коричневый"
           />
         </div>
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm text-leather-700">Для кого</label>
+        <select
+          className="input-field"
+          value={gender}
+          onChange={(e) => setGender(e.target.value as "" | "men" | "women" | "unisex")}
+        >
+          <option value="">Не указано</option>
+          <option value="men">Для него</option>
+          <option value="women">Для неё</option>
+          <option value="unisex">Унисекс</option>
+        </select>
       </div>
 
       <div className="flex items-center gap-2">
