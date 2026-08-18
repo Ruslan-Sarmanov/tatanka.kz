@@ -5,8 +5,10 @@ import Link from "next/link";
 
 export default function MobileNav({
   categories,
+  isLoggedIn,
 }: {
   categories: { slug: string; name: string }[];
+  isLoggedIn: boolean;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -34,6 +36,15 @@ export default function MobileNav({
                 {cat.name}
               </Link>
             ))}
+            <div className="mt-2 border-t border-saddle-100 pt-4">
+              <Link
+                href={isLoggedIn ? "/account" : "/login"}
+                onClick={() => setOpen(false)}
+                className="font-display text-lg text-ink transition hover:text-saddle-500"
+              >
+                {isLoggedIn ? "Личный кабинет" : "Войти"}
+              </Link>
+            </div>
           </nav>
         </div>
       )}
