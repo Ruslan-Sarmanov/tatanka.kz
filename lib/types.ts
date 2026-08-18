@@ -16,11 +16,21 @@ export type Product = {
   price: number;
   material: string | null;
   color: string | null;
+  gender: "men" | "women" | "unisex" | null;
   is_made_to_order: boolean;
   lead_time_days: number | null;
   is_active: boolean;
   images: ProductImage[];
   category?: Category;
+};
+
+export type Banner = {
+  id: string;
+  title: string | null;
+  image_url: string;
+  link_url: string;
+  sort_order: number;
+  is_active: boolean;
 };
 
 export type ProductImage = {
