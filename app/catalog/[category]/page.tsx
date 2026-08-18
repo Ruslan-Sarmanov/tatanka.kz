@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/ProductCard";
+import PromoBanners from "@/components/PromoBanners";
 
 export default async function CategoryPage({
   params,
@@ -19,12 +19,19 @@ export default async function CategoryPage({
 
   if (!category) notFound();
 
-  const { data: products } = await supabase
-    .from("products")
-    .select("*, images:product_images(*)")
-    .eq("category_id", category.id)
-    .eq("is_active", true)
-    .order("created_at", { ascending: false });
+  const [{ data: products }, { data: banners }] = await Promise.all([
+    supabase
+      .from("products")
+      .select("*, images:product_images(*)")
+      .eq("category_id", category.id)
+      .eq("is_active", true)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("banners")
+      .select("*")
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true }),
+  ]);
 
   return (
     <div className="pb-16">
@@ -35,34 +42,16 @@ export default async function CategoryPage({
       </div>
 
       <div className="container-page mt-4">
-        {category.image_url ? (
-          <div className="stitch-frame relative h-56 w-full overflow-hidden rounded-sm sm:h-72">
-            <Image
-              src={category.image_url}
-              alt={category.name}
-              fill
-              sizes="100vw"
-              className="object-cover"
-              priority
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/20 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-              <span className="eyebrow text-saddle-300">Каталог</span>
-              <h1 className="mt-1.5 font-display text-3xl text-parchment sm:text-4xl">{category.name}</h1>
-              {category.description && (
-                <p className="mt-2 max-w-xl text-sm text-parchment/75">{category.description}</p>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div>
-            <span className="eyebrow">Каталог</span>
-            <h1 className="mt-1.5 font-display text-3xl text-ink sm:text-4xl">{category.name}</h1>
-            {category.description && <p className="mt-2 max-w-xl text-ink/60">{category.description}</p>}
-            <div className="stitch-line mt-6 w-16" />
-          </div>
-        )}
+        <span className="eyebrow">Каталог</span>
+        <h1 className="mt-1.5 font-display text-3xl text-ink sm:text-4xl">{category.name}</h1>
+        {category.description && <p className="mt-2 max-w-xl text-ink/60">{category.description}</p>}
+        <div className="stitch-line mt-6 w-16" />
       </div>
+
+      {/* Баннер акций/скидок — тот же блок, что показывался бы на
+          главной, теперь живёт в каждом разделе каталога вместо
+          статичного фото раздела. */}
+      <PromoBanners banners={banners ?? []} />
 
       <div className="container-page mt-10">
         {!products || products.length === 0 ? (
