@@ -51,6 +51,8 @@ export default function ProductForm({
   // символ фактически дописывался позади "0" и терялся на вид, пока не
   // ввести второй. Строковое состояние с очисткой нулей решает это.
   const [priceStr, setPriceStr] = useState(product?.price != null ? String(product.price) : "");
+  const [material, setMaterial] = useState(product?.material ?? "");
+  const [color, setColor] = useState(product?.color ?? "");
   const [isMadeToOrder, setIsMadeToOrder] = useState(product?.is_made_to_order ?? true);
   const [leadTimeStr, setLeadTimeStr] = useState(
     product?.lead_time_days != null ? String(product.lead_time_days) : "14"
@@ -126,6 +128,8 @@ export default function ProductForm({
       category_id: categoryId || null,
       description,
       price: Number(priceStr) || 0,
+      material: material.trim() || null,
+      color: color.trim() || null,
       is_made_to_order: isMadeToOrder,
       lead_time_days: isMadeToOrder ? Number(leadTimeStr) || 1 : null,
       is_active: isActive,
@@ -210,6 +214,27 @@ export default function ProductForm({
           placeholder="0"
           required
         />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="mb-1 block text-sm text-leather-700">Материал</label>
+          <input
+            className="input-field"
+            value={material}
+            onChange={(e) => setMaterial(e.target.value)}
+            placeholder="Например: кожа растительного дубления"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-sm text-leather-700">Цвет</label>
+          <input
+            className="input-field"
+            value={color}
+            onChange={(e) => setColor(e.target.value)}
+            placeholder="Например: тёмно-коричневый"
+          />
+        </div>
       </div>
 
       <div className="flex items-center gap-2">
