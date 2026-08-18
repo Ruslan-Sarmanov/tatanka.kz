@@ -52,7 +52,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
             <p className="mt-6 max-w-md text-[15px] leading-relaxed text-ink/70">{product.description}</p>
           )}
 
-          {(product.material || product.color) && (
+          {(product.material || product.color || product.gender) && (
             <dl className="mt-6 max-w-md divide-y divide-leather-100 border-y border-leather-100 text-sm">
               {product.material && (
                 <div className="flex justify-between py-2">
@@ -64,6 +64,18 @@ export default async function ProductPage({ params }: { params: { slug: string }
                 <div className="flex justify-between py-2">
                   <dt className="text-ink/50">Цвет</dt>
                   <dd className="text-ink/80">{product.color}</dd>
+                </div>
+              )}
+              {product.gender && (
+                <div className="flex justify-between py-2">
+                  <dt className="text-ink/50">Для кого</dt>
+                  <dd className="text-ink/80">
+                    {
+                      { men: "Для него", women: "Для неё", unisex: "Унисекс" }[
+                        product.gender as "men" | "women" | "unisex"
+                      ]
+                    }
+                  </dd>
                 </div>
               )}
             </dl>
