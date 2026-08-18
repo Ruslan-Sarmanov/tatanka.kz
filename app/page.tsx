@@ -18,8 +18,6 @@ export default async function HomePage() {
     .order("created_at", { ascending: false })
     .limit(8);
 
-  const firstCategorySlug = categories?.[0]?.slug ?? "";
-
   return (
     <div>
       {/* ---- Герой: тёмная кожа, крупная метка бизона, клеймо-заголовок ---- */}
@@ -47,7 +45,7 @@ export default async function HomePage() {
               дубления. Каждое изделие вырезано, прошито и собрано вручную под ваш заказ.
             </p>
             <div className="mt-9 flex flex-wrap gap-4">
-              <Link href={`/catalog/${firstCategorySlug}`} className="btn-primary">
+              <Link href="/catalog" className="btn-primary">
                 Смотреть каталог
               </Link>
               <a href="#brand" className="btn-ghost-light">
@@ -66,7 +64,7 @@ export default async function HomePage() {
             <h2 className="mt-2 font-display text-2xl text-ink md:text-3xl">Разделы</h2>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 md:gap-5">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 md:gap-5 lg:grid-cols-6">
           {(categories ?? []).map((cat) => (
             <Link
               key={cat.slug}
@@ -132,7 +130,7 @@ export default async function HomePage() {
               размерам. Никакого конвейера — каждое изделие проходит через руки одного мастера,
               от раскроя до финальной прошивки.
             </p>
-            <Link href={`/catalog/${firstCategorySlug}`} className="btn-ghost-light mt-8 inline-flex">
+            <Link href="/catalog" className="btn-ghost-light mt-8 inline-flex">
               Смотреть изделия
             </Link>
           </div>
