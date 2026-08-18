@@ -4,6 +4,7 @@ const links = [
   { href: "/admin", label: "Дашборд" },
   { href: "/admin/products", label: "Товары" },
   { href: "/admin/categories", label: "Категории" },
+  { href: "/admin/banners", label: "Баннеры" },
   { href: "/admin/orders", label: "Заказы" },
 ];
 
