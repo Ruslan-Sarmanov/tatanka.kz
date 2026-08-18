@@ -52,6 +52,23 @@ export default async function ProductPage({ params }: { params: { slug: string }
             <p className="mt-6 max-w-md text-[15px] leading-relaxed text-ink/70">{product.description}</p>
           )}
 
+          {(product.material || product.color) && (
+            <dl className="mt-6 max-w-md divide-y divide-leather-100 border-y border-leather-100 text-sm">
+              {product.material && (
+                <div className="flex justify-between py-2">
+                  <dt className="text-ink/50">Материал</dt>
+                  <dd className="text-ink/80">{product.material}</dd>
+                </div>
+              )}
+              {product.color && (
+                <div className="flex justify-between py-2">
+                  <dt className="text-ink/50">Цвет</dt>
+                  <dd className="text-ink/80">{product.color}</dd>
+                </div>
+              )}
+            </dl>
+          )}
+
           <div className="mt-8">
             <AddToCartForm product={product as any} />
           </div>
