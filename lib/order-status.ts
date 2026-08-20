@@ -30,3 +30,7 @@ export const PAID_ORDER_STATUSES: OrderStatus[] = [
   "shipped",
   "completed",
 ];
+
+// Заказ можно отменить самостоятельно (покупателем), только пока он ещё
+// не оплачен — дальше отмена/возврат идёт через администратора.
+export const CANCELABLE_ORDER_STATUSES: OrderStatus[] = ["new", "awaiting_payment"];
