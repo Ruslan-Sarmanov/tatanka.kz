@@ -17,18 +17,19 @@ export default async function CatalogPage({
 }) {
   const supabase = createClient();
 
-  const { data: categories } = await supabase
-    .from("categories")
-    .select("id, slug, name")
-    .order("sort_order", { ascending: true });
-
-  // Списки значений для фильтров собираем из реальных товаров, а не
-  // захардкоженными — так фильтр всегда отражает то, что действительно
-  // есть в каталоге, и не показывает пустые варианты.
-  const { data: allActiveProducts } = await supabase
-    .from("products")
-    .select("material, color")
-    .eq("is_active", true);
+  const [{ data: categories }, { data: allActiveProducts }] = await Promise.all([
+    supabase
+      .from("categories")
+      .select("id, slug, name")
+      .order("sort_order", { ascending: true }),
+    // Списки значений для фильтров собираем из реальных товаров, а не
+    // захардкоженными — так фильтр всегда отражает то, что действительно
+    // есть в каталоге, и не показывает пустые варианты.
+    supabase
+      .from("products")
+      .select("material, color")
+      .eq("is_active", true),
+  ]);
 
   const materials = Array.from(
     new Set((allActiveProducts ?? []).map((p) => p.material).filter((v): v is string => !!v))
