@@ -19,6 +19,7 @@ export type Product = {
   gender: "men" | "women" | "unisex" | null;
   stock_quantity: number | null;
   cost: number | null;
+  is_featured: boolean;
   is_made_to_order: boolean;
   lead_time_days: number | null;
   is_active: boolean;
