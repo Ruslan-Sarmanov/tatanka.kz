@@ -2,7 +2,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import SignOutButton from "@/components/SignOutButton";
-import { orderStatusLabel } from "@/lib/order-status";
+import { orderStatusLabel, PAID_ORDER_STATUSES } from "@/lib/order-status";
+import AdminPanel from "@/components/account/AdminPanel";
+import type { AnalyticsRow } from "@/components/account/tabs/AnalyticsTab";
+import type { FinanceOrderRow } from "@/components/account/tabs/FinanceTab";
 
 export default async function AccountPage() {
   const supabase = createClient();
@@ -27,9 +30,125 @@ export default async function AccountPage() {
   ]);
 
   const isAdmin = profile?.role === "admin";
-  const { count: newOrdersCount } = isAdmin
-    ? await supabase.from("orders").select("*", { count: "exact", head: true }).eq("status", "paid")
-    : { count: null };
+
+  // Все данные для админ-панели тянем один раз здесь и передаём вниз как
+  // готовые пропсы — вкладки переключаются потом чисто на клиенте, без
+  // повторных запросов и без смены адреса страницы.
+  let adminData: {
+    productsCount: number;
+    ordersCount: number;
+    revenue: number;
+    newOrdersCount: number;
+    products: any[];
+    categories: any[];
+    banners: any[];
+    adminOrders: any[];
+    analyticsRows: AnalyticsRow[];
+    financeOrders: FinanceOrderRow[];
+  } | null = null;
+
+  if (isAdmin) {
+    const [
+      { count: productsCount },
+      { count: ordersCount },
+      { count: newOrdersCount },
+      { data: products },
+      { data: categories },
+      { data: banners },
+      { data: adminOrders },
+      { data: analyticsItemRows },
+      { data: financeOrdersRaw },
+    ] = await Promise.all([
+      supabase.from("products").select("*", { count: "exact", head: true }),
+      supabase.from("orders").select("*", { count: "exact", head: true }),
+      supabase.from("orders").select("*", { count: "exact", head: true }).eq("status", "paid"),
+      supabase
+        .from("products")
+        .select(
+          "id, name, price, stock_quantity, is_active, category:categories(name), images:product_images(url, sort_order)"
+        )
+        .order("created_at", { ascending: false }),
+      supabase.from("categories").select("*").order("sort_order", { ascending: true }),
+      supabase.from("banners").select("*").order("sort_order", { ascending: true }),
+      supabase
+        .from("orders")
+        .select(
+          "id, order_number, status, total, contact_name, created_at, order_items(id, product_name, quantity, product:products(images:product_images(url, sort_order)))"
+        )
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("order_items")
+        .select(
+          "quantity, price, product:products(id, name, price, category_id, images:product_images(url, sort_order), category:categories(slug, name)), order:orders!inner(status)"
+        )
+        .in("order.status", PAID_ORDER_STATUSES),
+      supabase
+        .from("orders")
+        .select("id, order_number, created_at, total, status, order_items(quantity, price, product:products(cost))")
+        .in("status", PAID_ORDER_STATUSES)
+        .order("created_at", { ascending: false }),
+    ]);
+
+    const { data: revenueRows } = await supabase.from("orders").select("total").eq("status", "paid");
+    const revenue = (revenueRows ?? []).reduce((sum, o: any) => sum + Number(o.total), 0);
+
+    // Аналитика: группируем позиции заказов по товару.
+    const byProduct = new Map<string, AnalyticsRow>();
+    for (const item of (analyticsItemRows ?? []) as any[]) {
+      const p = item.product;
+      if (!p) continue;
+      const sortedImages = [...(p.images ?? [])].sort((a: any, b: any) => a.sort_order - b.sort_order);
+      const image = sortedImages[0]?.url ?? null;
+      const lineRevenue = Number(item.price) * item.quantity;
+      const existing = byProduct.get(p.id);
+      if (existing) {
+        existing.qty += item.quantity;
+        existing.revenue += lineRevenue;
+      } else {
+        byProduct.set(p.id, {
+          productId: p.id,
+          name: p.name,
+          image,
+          categorySlug: p.category?.slug ?? null,
+          categoryName: p.category?.name ?? "—",
+          price: Number(p.price),
+          qty: item.quantity,
+          revenue: lineRevenue,
+        });
+      }
+    }
+
+    // Финансы: считаем себестоимость/прибыль по каждому оплаченному заказу.
+    const financeOrders: FinanceOrderRow[] = (financeOrdersRaw ?? []).map((o: any) => {
+      const cost = (o.order_items ?? []).reduce(
+        (sum: number, item: any) => sum + item.quantity * Number(item.product?.cost ?? 0),
+        0
+      );
+      const total = Number(o.total);
+      return {
+        id: o.id,
+        orderNumber: o.order_number,
+        createdAt: o.created_at,
+        total,
+        cost,
+        profit: total - cost,
+        status: o.status,
+      };
+    });
+
+    adminData = {
+      productsCount: productsCount ?? 0,
+      ordersCount: ordersCount ?? 0,
+      revenue,
+      newOrdersCount: newOrdersCount ?? 0,
+      products: products ?? [],
+      categories: categories ?? [],
+      banners: banners ?? [],
+      adminOrders: adminOrders ?? [],
+      analyticsRows: Array.from(byProduct.values()),
+      financeOrders,
+    };
+  }
 
   return (
     <div className="container-page space-y-8 py-12">
@@ -56,28 +175,6 @@ export default async function AccountPage() {
         </dl>
       </div>
 
-      {isAdmin && (
-        <Link
-          href="/account/admin"
-          className="card flex items-center justify-between border-saddle-200 bg-saddle-50 p-6 transition hover:bg-saddle-100"
-        >
-          <div>
-            <h2 className="text-lg font-medium text-leather-800">Управление магазином</h2>
-            <p className="mt-1 text-sm text-leather-600">
-              Товары, категории, баннеры, заказы, аналитика и финансы
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            {!!newOrdersCount && (
-              <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-medium text-white">
-                {newOrdersCount}
-              </span>
-            )}
-            <span className="text-saddle-600">→</span>
-          </div>
-        </Link>
-      )}
-
       <div className="card p-6">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-medium text-leather-800">Последние заказы</h2>
@@ -103,6 +200,21 @@ export default async function AccountPage() {
           </ul>
         )}
       </div>
+
+      {isAdmin && adminData && (
+        <AdminPanel
+          productsCount={adminData.productsCount}
+          ordersCount={adminData.ordersCount}
+          revenue={adminData.revenue}
+          newOrdersCount={adminData.newOrdersCount}
+          products={adminData.products}
+          categories={adminData.categories}
+          banners={adminData.banners}
+          orders={adminData.adminOrders}
+          analyticsRows={adminData.analyticsRows}
+          financeOrders={adminData.financeOrders}
+        />
+      )}
     </div>
   );
 }
