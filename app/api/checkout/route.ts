@@ -61,5 +61,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: itemsError.message }, { status: 500 });
   }
 
+  // Списываем остаток на складе. Возможный побочный эффект: если оплата
+  // после этого не пройдёт (например, покупатель закрыл страницу
+  // Robokassa), остаток всё равно спишется, поскольку списание привязано
+  // к моменту оформления заказа, а не к подтверждению оплаты через
+  // webhook. Для товаров с ручным учётом небольших партий это
+  // некритично, но стоит иметь в виду.
+  for (const item of items) {
+    if (item.productId) {
+      await supabase.rpc("decrement_product_stock", {
+        p_product_id: item.productId,
+        p_qty: item.quantity,
+      });
+    }
+  }
+
   return NextResponse.json({ orderId: order.id, total });
 }
