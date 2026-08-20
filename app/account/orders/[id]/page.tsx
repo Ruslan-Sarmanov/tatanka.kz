@@ -2,7 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { orderStatusLabel, CANCELABLE_ORDER_STATUSES } from "@/lib/order-status";
+import { CANCELABLE_ORDER_STATUSES } from "@/lib/order-status";
+import OrderStatusBadge from "@/components/OrderStatusBadge";
 import CancelOrderButton from "@/components/CancelOrderButton";
 import EditOrderDetailsForm from "@/components/EditOrderDetailsForm";
 
@@ -30,7 +31,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
         Заказ №{order.order_number}
       </h1>
       <p className="text-leather-600">
-        Статус: <span className="font-medium">{orderStatusLabel(order.status)}</span>
+        Статус: <OrderStatusBadge status={order.status} />
       </p>
 
       {canPayOrCancel && (
