@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { orderStatusLabel } from "@/lib/order-status";
+import { orderStatusLabel, CANCELABLE_ORDER_STATUSES } from "@/lib/order-status";
 
 export default async function OrdersPage() {
   const supabase = createClient();
@@ -28,23 +28,37 @@ export default async function OrdersPage() {
       ) : (
         <div className="card divide-y divide-leather-100">
           {orders.map((o: any) => (
-            <Link
-              key={o.id}
-              href={`/account/orders/${o.id}`}
-              className="block px-6 py-4 text-sm hover:bg-leather-50"
-            >
-              <div className="flex items-center justify-between">
+            // relative div вместо цельной <Link> на всю карточку — нужно
+            // место для отдельной кликабельной кнопки "Оплатить" внутри
+            // (вложенный <a> в <a> невалиден и ведёт себя непредсказуемо).
+            // Сама карточка по-прежнему кликабельна целиком через
+            // невидимую подложку absolute inset-0 с z-0.
+            <div key={o.id} className="relative px-6 py-4 text-sm hover:bg-leather-50">
+              <Link
+                href={`/account/orders/${o.id}`}
+                className="absolute inset-0 z-0"
+                aria-label={`Заказ №${o.order_number}`}
+              />
+              <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
                 <span className="font-medium">Заказ №{o.order_number}</span>
                 <span className="text-leather-500">
                   {new Date(o.created_at).toLocaleDateString("ru-RU")}
                 </span>
                 <span>{orderStatusLabel(o.status)}</span>
+                {CANCELABLE_ORDER_STATUSES.includes(o.status) && (
+                  <Link
+                    href={`/checkout/payment?order=${o.id}`}
+                    className="rounded-sm bg-saddle-500 px-3 py-1.5 text-xs font-medium text-parchment transition hover:bg-saddle-600"
+                  >
+                    Оплатить
+                  </Link>
+                )}
                 <span className="font-medium">{Number(o.total).toLocaleString("ru-RU")} ₸</span>
               </div>
 
               {/* Превью содержимого — чтобы понять, что внутри, без
                   необходимости открывать заказ. */}
-              <div className="mt-3 flex flex-wrap gap-3">
+              <div className="relative z-10 mt-3 flex flex-wrap gap-3">
                 {o.order_items.map((item: any) => {
                   const sortedImages = [...(item.product?.images ?? [])].sort(
                     (a: any, b: any) => a.sort_order - b.sort_order
@@ -63,7 +77,7 @@ export default async function OrdersPage() {
                   );
                 })}
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}
