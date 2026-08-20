@@ -26,7 +26,7 @@ export default async function AdminDashboardPage() {
 
       {!!newOrdersCount && (
         <Link
-          href="/admin/orders"
+          href="/account/admin/orders"
           className="mb-6 flex items-center justify-between rounded-sm border border-red-200 bg-red-50 px-5 py-4 text-sm transition hover:bg-red-100"
         >
           <span className="font-medium text-red-800">
