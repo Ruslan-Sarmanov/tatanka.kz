@@ -89,7 +89,7 @@ export default function AdminPanel({
               onOpenOrders={() => setActive("orders")}
             />
           )}
-          {active === "products" && <ProductsTab products={products} />}
+          {active === "products" && <ProductsTab products={products} categories={categories} />}
           {active === "categories" && <CategoriesTab categories={categories} />}
           {active === "banners" && <BannersTab banners={banners} />}
           {active === "orders" && <OrdersTab orders={orders} />}
