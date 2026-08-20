@@ -30,7 +30,7 @@ export default async function AdminProductsPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="font-display text-2xl text-leather-800">Товары</h1>
-        <Link href="/admin/products/new" className="btn-primary">
+        <Link href="/account/admin/products/new" className="btn-primary">
           Добавить товар
         </Link>
       </div>
@@ -43,7 +43,7 @@ export default async function AdminProductsPage() {
           return (
             <Link
               key={p.id}
-              href={`/admin/products/${p.id}`}
+              href={`/account/admin/products/${p.id}`}
               className="flex items-center gap-4 px-4 py-3 text-sm hover:bg-leather-50"
             >
               <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded bg-leather-100">
