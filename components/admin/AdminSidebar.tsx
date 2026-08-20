@@ -13,13 +13,16 @@ const links = [
 
 export default async function AdminSidebar() {
   const supabase = createClient();
-  // Заказы со статусом "new" — те, что ещё не открывали/не начали
-  // обрабатывать. Как только статус меняют в карточке заказа, счётчик
-  // сам уменьшается — отдельного поля "прочитано" не потребовалось.
+  // "paid" — деньги получены, но заказ ещё не взят в работу. Раньше
+  // здесь считались заказы со статусом "new", но при оформлении заказ
+  // сразу создаётся как "awaiting_payment" — статус "new" в реальности
+  // никогда не возникает, из-за чего счётчик всегда показывал 0. Как
+  // только статус меняют на "in_production" и дальше, заказ считается
+  // взятым в работу и пропадает из счётчика.
   const { count: newOrdersCount } = await supabase
     .from("orders")
     .select("*", { count: "exact", head: true })
-    .eq("status", "new");
+    .eq("status", "paid");
 
   return (
     <aside className="w-56 shrink-0 border-r border-leather-100 bg-white">
