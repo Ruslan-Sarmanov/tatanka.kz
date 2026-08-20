@@ -13,7 +13,7 @@ export default async function AdminBannersPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="font-display text-2xl text-leather-800">Баннеры</h1>
-        <Link href="/admin/banners/new" className="btn-primary">
+        <Link href="/account/admin/banners/new" className="btn-primary">
           Добавить баннер
         </Link>
       </div>
@@ -22,7 +22,7 @@ export default async function AdminBannersPage() {
         {(banners ?? []).map((b) => (
           <Link
             key={b.id}
-            href={`/admin/banners/${b.id}`}
+            href={`/account/admin/banners/${b.id}`}
             className="flex items-center gap-4 px-4 py-3 text-sm hover:bg-leather-50"
           >
             <div className="relative h-12 w-24 shrink-0 overflow-hidden rounded bg-leather-100">
