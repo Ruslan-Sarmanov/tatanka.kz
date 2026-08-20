@@ -15,6 +15,7 @@ export default async function HomePage() {
       .from("products")
       .select("*, images:product_images(*)")
       .eq("is_active", true)
+      .eq("is_featured", true)
       .order("created_at", { ascending: false })
       .limit(8),
   ]);
