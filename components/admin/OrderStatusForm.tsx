@@ -4,16 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { OrderStatus } from "@/lib/types";
-
-const STATUSES: { value: OrderStatus; label: string }[] = [
-  { value: "new", label: "Новый" },
-  { value: "awaiting_payment", label: "Ожидает оплаты" },
-  { value: "paid", label: "Оплачен" },
-  { value: "in_production", label: "В изготовлении" },
-  { value: "shipped", label: "Отправлен" },
-  { value: "completed", label: "Завершён" },
-  { value: "cancelled", label: "Отменён" },
-];
+import { ORDER_STATUSES } from "@/lib/order-status";
 
 export default function OrderStatusForm({ orderId, status }: { orderId: string; status: OrderStatus }) {
   const router = useRouter();
@@ -36,7 +27,7 @@ export default function OrderStatusForm({ orderId, status }: { orderId: string; 
         value={value}
         onChange={(e) => handleChange(e.target.value as OrderStatus)}
       >
-        {STATUSES.map((s) => (
+        {ORDER_STATUSES.map((s) => (
           <option key={s.value} value={s.value}>{s.label}</option>
         ))}
       </select>
