@@ -2,6 +2,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import OrderStatusForm from "@/components/admin/OrderStatusForm";
+import OrderStatusBadge from "@/components/OrderStatusBadge";
 
 export default async function AdminOrderDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient();
@@ -15,8 +16,11 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-2xl text-leather-800">Заказ №{order.order_number}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <h1 className="font-display text-2xl text-leather-800">Заказ №{order.order_number}</h1>
+          <OrderStatusBadge status={order.status} />
+        </div>
         <OrderStatusForm orderId={order.id} status={order.status} />
       </div>
 
