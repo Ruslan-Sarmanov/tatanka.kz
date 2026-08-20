@@ -26,6 +26,11 @@ export default async function AccountPage() {
       .limit(5),
   ]);
 
+  const isAdmin = profile?.role === "admin";
+  const { count: newOrdersCount } = isAdmin
+    ? await supabase.from("orders").select("*", { count: "exact", head: true }).eq("status", "paid")
+    : { count: null };
+
   return (
     <div className="container-page space-y-8 py-12">
       <div className="flex items-center justify-between">
@@ -49,12 +54,29 @@ export default async function AccountPage() {
             <dd className="text-leather-900">{user.email}</dd>
           </div>
         </dl>
-        {profile?.role === "admin" && (
-          <Link href="/admin" className="mt-4 inline-block text-sm underline text-leather-700">
-            Перейти в панель администратора
-          </Link>
-        )}
       </div>
+
+      {isAdmin && (
+        <Link
+          href="/account/admin"
+          className="card flex items-center justify-between border-saddle-200 bg-saddle-50 p-6 transition hover:bg-saddle-100"
+        >
+          <div>
+            <h2 className="text-lg font-medium text-leather-800">Управление магазином</h2>
+            <p className="mt-1 text-sm text-leather-600">
+              Товары, категории, баннеры, заказы, аналитика и финансы
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            {!!newOrdersCount && (
+              <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-medium text-white">
+                {newOrdersCount}
+              </span>
+            )}
+            <span className="text-saddle-600">→</span>
+          </div>
+        </Link>
+      )}
 
       <div className="card p-6">
         <div className="mb-4 flex items-center justify-between">
