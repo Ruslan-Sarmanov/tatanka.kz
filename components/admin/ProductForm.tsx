@@ -54,6 +54,10 @@ export default function ProductForm({
   const [material, setMaterial] = useState(product?.material ?? "");
   const [color, setColor] = useState(product?.color ?? "");
   const [gender, setGender] = useState<"" | "men" | "women" | "unisex">(product?.gender ?? "");
+  const [stockStr, setStockStr] = useState(
+    product?.stock_quantity != null ? String(product.stock_quantity) : ""
+  );
+  const [costStr, setCostStr] = useState(product?.cost != null ? String(product.cost) : "");
   const [isMadeToOrder, setIsMadeToOrder] = useState(product?.is_made_to_order ?? true);
   const [leadTimeStr, setLeadTimeStr] = useState(
     product?.lead_time_days != null ? String(product.lead_time_days) : "14"
@@ -132,6 +136,8 @@ export default function ProductForm({
       material: material.trim() || null,
       color: color.trim() || null,
       gender: gender || null,
+      stock_quantity: stockStr.trim() ? Number(stockStr) : null,
+      cost: costStr.trim() ? Number(costStr) : null,
       is_made_to_order: isMadeToOrder,
       lead_time_days: isMadeToOrder ? Number(leadTimeStr) || 1 : null,
       is_active: isActive,
@@ -251,6 +257,40 @@ export default function ProductForm({
           <option value="women">Для неё</option>
           <option value="unisex">Унисекс</option>
         </select>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="mb-1 block text-sm text-leather-700">
+            Остаток на складе <span className="text-ink/40">(пусто — без учёта остатков)</span>
+          </label>
+          <input
+            type="text"
+            inputMode="numeric"
+            className="input-field"
+            value={stockStr}
+            onChange={handleDigitsChange(setStockStr)}
+            placeholder="Не отслеживается"
+          />
+          {stockStr.trim() && Number(stockStr) === 0 && (
+            <p className="mt-1 text-xs text-amber-600">
+              Остаток 0 — товар автоматически перейдёт в «Изготовление под заказ».
+            </p>
+          )}
+        </div>
+        <div>
+          <label className="mb-1 block text-sm text-leather-700">
+            Себестоимость, ₸ <span className="text-ink/40">(для расчёта прибыли, не видна покупателю)</span>
+          </label>
+          <input
+            type="text"
+            inputMode="numeric"
+            className="input-field"
+            value={costStr}
+            onChange={handleDigitsChange(setCostStr)}
+            placeholder="0"
+          />
+        </div>
       </div>
 
       <div className="flex items-center gap-2">
