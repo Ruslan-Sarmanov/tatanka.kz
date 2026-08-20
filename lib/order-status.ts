@@ -19,3 +19,14 @@ export const ORDER_STATUSES: { value: OrderStatus; label: string }[] = (
 export function orderStatusLabel(status: string) {
   return ORDER_STATUS_LABELS[status as OrderStatus] ?? status;
 }
+
+// Статусы, которые считаются подтверждённой оплатой — используются в
+// аналитике и финансах, чтобы не учитывать неоплаченные/отменённые заказы
+// как выручку. "new" и "awaiting_payment" — деньги ещё не получены,
+// "cancelled" — заказ не состоялся.
+export const PAID_ORDER_STATUSES: OrderStatus[] = [
+  "paid",
+  "in_production",
+  "shipped",
+  "completed",
+];
