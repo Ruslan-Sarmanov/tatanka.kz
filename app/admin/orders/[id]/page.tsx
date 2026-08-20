@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import OrderStatusForm from "@/components/admin/OrderStatusForm";
@@ -6,7 +7,7 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
   const supabase = createClient();
   const { data: order } = await supabase
     .from("orders")
-    .select("*, order_items(*)")
+    .select("*, order_items(*, product:products(images:product_images(url, sort_order)))")
     .eq("id", params.id)
     .single();
 
@@ -20,17 +21,26 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
       </div>
 
       <div className="card divide-y divide-leather-100">
-        {order.order_items.map((item: any) => (
-          <div key={item.id} className="flex items-center justify-between px-6 py-4 text-sm">
-            <div>
-              <p className="font-medium">{item.product_name}</p>
-              {item.customization && (
-                <p className="text-leather-500">Пожелания: {item.customization}</p>
-              )}
+        {order.order_items.map((item: any) => {
+          const sortedImages = [...(item.product?.images ?? [])].sort(
+            (a: any, b: any) => a.sort_order - b.sort_order
+          );
+          const thumb = sortedImages[0]?.url as string | undefined;
+          return (
+            <div key={item.id} className="flex items-center gap-4 px-6 py-4 text-sm">
+              <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded bg-leather-100">
+                {thumb && <Image src={thumb} alt="" fill className="object-cover" unoptimized />}
+              </div>
+              <div className="flex-1">
+                <p className="font-medium">{item.product_name}</p>
+                {item.customization && (
+                  <p className="text-leather-500">Пожелания: {item.customization}</p>
+                )}
+              </div>
+              <p>{item.quantity} × {Number(item.price).toLocaleString("ru-RU")} ₸</p>
             </div>
-            <p>{item.quantity} × {Number(item.price).toLocaleString("ru-RU")} ₸</p>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="card p-6 text-sm">
