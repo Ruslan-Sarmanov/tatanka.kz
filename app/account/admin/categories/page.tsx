@@ -12,7 +12,7 @@ export default async function AdminCategoriesPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="font-display text-2xl text-ink">Категории</h1>
-        <Link href="/admin/categories/new" className="btn-primary">
+        <Link href="/account/admin/categories/new" className="btn-primary">
           Добавить раздел
         </Link>
       </div>
@@ -21,7 +21,7 @@ export default async function AdminCategoriesPage() {
         {(categories ?? []).map((c) => (
           <Link
             key={c.id}
-            href={`/admin/categories/${c.id}`}
+            href={`/account/admin/categories/${c.id}`}
             className="flex items-center justify-between gap-4 px-4 py-3 text-sm transition hover:bg-saddle-50"
           >
             <span className="font-medium text-ink">{c.name}</span>
