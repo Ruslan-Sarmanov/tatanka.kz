@@ -2,7 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import SignOutButton from "@/components/SignOutButton";
-import { orderStatusLabel, PAID_ORDER_STATUSES } from "@/lib/order-status";
+import { PAID_ORDER_STATUSES } from "@/lib/order-status";
+import OrderStatusBadge from "@/components/OrderStatusBadge";
 import AdminPanel from "@/components/account/AdminPanel";
 import type { AnalyticsRow } from "@/components/account/tabs/AnalyticsTab";
 import type { FinanceOrderRow } from "@/components/account/tabs/FinanceTab";
@@ -193,7 +194,7 @@ export default async function AccountPage() {
                   Заказ №{o.order_number}
                 </Link>
                 <span className="text-leather-500">{new Date(o.created_at).toLocaleDateString("ru-RU")}</span>
-                <span>{orderStatusLabel(o.status)}</span>
+                <OrderStatusBadge status={o.status} />
                 <span className="font-medium">{o.total.toLocaleString("ru-RU")} ₸</span>
               </li>
             ))}
