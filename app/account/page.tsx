@@ -1,10 +1,8 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import SignOutButton from "@/components/SignOutButton";
 import { PAID_ORDER_STATUSES } from "@/lib/order-status";
-import OrderStatusBadge from "@/components/OrderStatusBadge";
-import AdminPanel from "@/components/account/AdminPanel";
+import AccountTabs from "@/components/account/AccountTabs";
 import type { AnalyticsRow } from "@/components/account/tabs/AnalyticsTab";
 import type { FinanceOrderRow } from "@/components/account/tabs/FinanceTab";
 
@@ -152,70 +150,19 @@ export default async function AccountPage() {
   }
 
   return (
-    <div className="container-page space-y-8 py-12">
+    <div className="container-page space-y-6 py-12">
       <div className="flex items-center justify-between">
         <h1 className="font-display text-3xl text-leather-800">Личный кабинет</h1>
         <SignOutButton />
       </div>
 
-      <div className="card p-6">
-        <h2 className="mb-4 text-lg font-medium text-leather-800">Профиль</h2>
-        <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
-          <div>
-            <dt className="text-leather-500">Имя</dt>
-            <dd className="text-leather-900">{profile?.full_name || "—"}</dd>
-          </div>
-          <div>
-            <dt className="text-leather-500">Телефон</dt>
-            <dd className="text-leather-900">{profile?.phone || "—"}</dd>
-          </div>
-          <div>
-            <dt className="text-leather-500">Email</dt>
-            <dd className="text-leather-900">{user.email}</dd>
-          </div>
-        </dl>
-      </div>
-
-      <div className="card p-6">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-medium text-leather-800">Последние заказы</h2>
-          <Link href="/account/orders" className="text-sm underline text-leather-700">
-            Все заказы
-          </Link>
-        </div>
-
-        {!orders || orders.length === 0 ? (
-          <p className="text-sm text-leather-500">У вас пока нет заказов.</p>
-        ) : (
-          <ul className="divide-y divide-leather-100">
-            {orders.map((o) => (
-              <li key={o.id} className="flex items-center justify-between py-3 text-sm">
-                <Link href={`/account/orders/${o.id}`} className="underline">
-                  Заказ №{o.order_number}
-                </Link>
-                <span className="text-leather-500">{new Date(o.created_at).toLocaleDateString("ru-RU")}</span>
-                <OrderStatusBadge status={o.status} />
-                <span className="font-medium">{o.total.toLocaleString("ru-RU")} ₸</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      {isAdmin && adminData && (
-        <AdminPanel
-          productsCount={adminData.productsCount}
-          ordersCount={adminData.ordersCount}
-          revenue={adminData.revenue}
-          newOrdersCount={adminData.newOrdersCount}
-          products={adminData.products}
-          categories={adminData.categories}
-          banners={adminData.banners}
-          orders={adminData.adminOrders}
-          analyticsRows={adminData.analyticsRows}
-          financeOrders={adminData.financeOrders}
-        />
-      )}
+      <AccountTabs
+        profile={profile ? { full_name: profile.full_name, phone: profile.phone } : null}
+        email={user.email ?? ""}
+        orders={orders ?? []}
+        isAdmin={isAdmin}
+        adminData={adminData}
+      />
     </div>
   );
 }
