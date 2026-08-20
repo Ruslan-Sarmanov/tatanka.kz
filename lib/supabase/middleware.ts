@@ -6,14 +6,14 @@ import { NextResponse, type NextRequest } from "next/server";
 // Важно: проверка auth.getUser() — это сетевой запрос к серверу Supabase,
 // и раньше он выполнялся безусловно на КАЖДОЙ странице сайта (главная,
 // каталог, карточка товара и т.д.), хотя авторизация реально нужна только
-// на /account, /checkout и /admin. Это добавляло лишний сетевой прыжок
+// на /account, /checkout и /account/admin. Это добавляло лишний сетевой прыжок
 // перед началом рендера практически любой страницы — отсюда и ощущение
 // подвисания при переходах. Теперь путь проверяется первым (без сети),
 // и запрос к Supabase уходит только туда, где он действительно нужен.
 export async function updateSession(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isPrivate = path.startsWith("/account") || path.startsWith("/checkout");
-  const isAdmin = path.startsWith("/admin");
+  const isAdmin = path.startsWith("/account/admin");
 
   if (!isPrivate && !isAdmin) {
     return NextResponse.next({ request: { headers: request.headers } });
