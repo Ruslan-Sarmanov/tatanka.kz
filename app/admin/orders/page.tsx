@@ -1,15 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-
-const STATUS_LABELS: Record<string, string> = {
-  new: "Новый",
-  awaiting_payment: "Ожидает оплаты",
-  paid: "Оплачен",
-  in_production: "В изготовлении",
-  shipped: "Отправлен",
-  completed: "Завершён",
-  cancelled: "Отменён",
-};
+import { orderStatusLabel } from "@/lib/order-status";
 
 export default async function AdminOrdersPage() {
   const supabase = createClient();
@@ -34,7 +25,7 @@ export default async function AdminOrdersPage() {
             <span className="text-leather-500">
               {new Date(o.created_at).toLocaleDateString("ru-RU")}
             </span>
-            <span>{STATUS_LABELS[o.status] ?? o.status}</span>
+            <span>{orderStatusLabel(o.status)}</span>
             <span className="font-medium">{Number(o.total).toLocaleString("ru-RU")} ₸</span>
           </Link>
         ))}
