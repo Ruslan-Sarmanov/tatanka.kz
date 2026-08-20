@@ -63,6 +63,7 @@ export default function ProductForm({
     product?.lead_time_days != null ? String(product.lead_time_days) : "14"
   );
   const [isActive, setIsActive] = useState(product?.is_active ?? true);
+  const [isFeatured, setIsFeatured] = useState(product?.is_featured ?? true);
   const [images, setImages] = useState<UploadedImage[]>(
     product?.images?.map((i) => ({ url: i.url })) ?? []
   );
@@ -141,6 +142,7 @@ export default function ProductForm({
       is_made_to_order: isMadeToOrder,
       lead_time_days: isMadeToOrder ? Number(leadTimeStr) || 1 : null,
       is_active: isActive,
+      is_featured: isFeatured,
     };
 
     let productId = product?.id;
@@ -325,6 +327,18 @@ export default function ProductForm({
           onChange={(e) => setIsActive(e.target.checked)}
         />
         <label htmlFor="isActive" className="text-sm text-leather-700">Показывать на сайте</label>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          id="isFeatured"
+          checked={isFeatured}
+          onChange={(e) => setIsFeatured(e.target.checked)}
+        />
+        <label htmlFor="isFeatured" className="text-sm text-leather-700">
+          Показывать в разделе «Новинки» на главной
+        </label>
       </div>
 
       <div>
