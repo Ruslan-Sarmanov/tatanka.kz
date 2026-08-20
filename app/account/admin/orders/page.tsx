@@ -20,7 +20,7 @@ export default async function AdminOrdersPage() {
         {(orders ?? []).map((o: any) => (
           <Link
             key={o.id}
-            href={`/admin/orders/${o.id}`}
+            href={`/account/admin/orders/${o.id}`}
             className="block px-4 py-3 text-sm hover:bg-leather-50"
           >
             <div className="flex items-center justify-between">
