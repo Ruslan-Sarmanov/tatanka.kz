@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import SignOutButton from "@/components/SignOutButton";
+import { orderStatusLabel } from "@/lib/order-status";
 
 export default async function AccountPage() {
   const supabase = createClient();
@@ -73,7 +74,7 @@ export default async function AccountPage() {
                   Заказ №{o.order_number}
                 </Link>
                 <span className="text-leather-500">{new Date(o.created_at).toLocaleDateString("ru-RU")}</span>
-                <span>{o.status}</span>
+                <span>{orderStatusLabel(o.status)}</span>
                 <span className="font-medium">{o.total.toLocaleString("ru-RU")} ₸</span>
               </li>
             ))}
