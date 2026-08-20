@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { orderStatusLabel } from "@/lib/order-status";
+import OrderStatusBadge from "@/components/OrderStatusBadge";
 
 export default function OrdersTab({ orders }: { orders: any[] }) {
   return (
@@ -14,19 +14,14 @@ export default function OrdersTab({ orders }: { orders: any[] }) {
             href={`/account/admin/orders/${o.id}`}
             className="block px-4 py-3 text-sm hover:bg-leather-50"
           >
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center gap-3">
               <span className="font-medium">№{o.order_number}</span>
-              <span>{o.contact_name}</span>
+              <span className="text-leather-600">{o.contact_name}</span>
               <span className="text-leather-500">
                 {new Date(o.created_at).toLocaleDateString("ru-RU")}
               </span>
-              {o.status === "new" && (
-                <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
-                  Новый
-                </span>
-              )}
-              <span>{orderStatusLabel(o.status)}</span>
-              <span className="font-medium">{Number(o.total).toLocaleString("ru-RU")} ₸</span>
+              <OrderStatusBadge status={o.status} />
+              <span className="ml-auto font-medium">{Number(o.total).toLocaleString("ru-RU")} ₸</span>
             </div>
 
             <div className="mt-2 flex flex-wrap gap-3">
