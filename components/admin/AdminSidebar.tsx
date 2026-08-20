@@ -2,13 +2,13 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
 const links = [
-  { href: "/admin", label: "Дашборд" },
-  { href: "/admin/products", label: "Товары" },
-  { href: "/admin/categories", label: "Категории" },
-  { href: "/admin/banners", label: "Баннеры" },
-  { href: "/admin/orders", label: "Заказы" },
-  { href: "/admin/analytics", label: "Аналитика" },
-  { href: "/admin/finance", label: "Финансы" },
+  { href: "/account/admin", label: "Дашборд" },
+  { href: "/account/admin/products", label: "Товары" },
+  { href: "/account/admin/categories", label: "Категории" },
+  { href: "/account/admin/banners", label: "Баннеры" },
+  { href: "/account/admin/orders", label: "Заказы" },
+  { href: "/account/admin/analytics", label: "Аналитика" },
+  { href: "/account/admin/finance", label: "Финансы" },
 ];
 
 export default async function AdminSidebar() {
@@ -35,15 +35,18 @@ export default async function AdminSidebar() {
             className="flex items-center justify-between rounded px-3 py-2 text-sm text-leather-700 hover:bg-leather-50"
           >
             <span>{l.label}</span>
-            {l.href === "/admin/orders" && !!newOrdersCount && (
+            {l.href === "/account/admin/orders" && !!newOrdersCount && (
               <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-medium text-white">
                 {newOrdersCount}
               </span>
             )}
           </Link>
         ))}
-        <Link href="/" className="mt-4 rounded px-3 py-2 text-sm text-leather-500 hover:bg-leather-50">
-          ← На сайт
+        <Link href="/account" className="mt-4 rounded px-3 py-2 text-sm text-leather-500 hover:bg-leather-50">
+          ← Личный кабинет
+        </Link>
+        <Link href="/" className="rounded px-3 py-2 text-sm text-leather-500 hover:bg-leather-50">
+          На сайт
         </Link>
       </nav>
     </aside>
