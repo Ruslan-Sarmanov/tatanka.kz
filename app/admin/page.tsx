@@ -9,7 +9,7 @@ export default async function AdminDashboardPage() {
       supabase.from("products").select("*", { count: "exact", head: true }),
       supabase.from("orders").select("*", { count: "exact", head: true }),
       supabase.from("orders").select("total").eq("status", "paid"),
-      supabase.from("orders").select("*", { count: "exact", head: true }).eq("status", "new"),
+      supabase.from("orders").select("*", { count: "exact", head: true }).eq("status", "paid"),
     ]);
 
   const revenue = (revenueRows ?? []).reduce((sum, o: any) => sum + Number(o.total), 0);
