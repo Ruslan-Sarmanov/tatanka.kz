@@ -1,15 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-
-const STATUS_LABELS: Record<string, string> = {
-  new: "Новый",
-  awaiting_payment: "Ожидает оплаты",
-  paid: "Оплачен",
-  in_production: "В изготовлении",
-  shipped: "Отправлен",
-  completed: "Завершён",
-  cancelled: "Отменён",
-};
+import { orderStatusLabel } from "@/lib/order-status";
 
 export default async function OrderDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient();
@@ -33,7 +24,7 @@ export default async function OrderDetailPage({ params }: { params: { id: string
         Заказ №{order.order_number}
       </h1>
       <p className="text-leather-600">
-        Статус: <span className="font-medium">{STATUS_LABELS[order.status] ?? order.status}</span>
+        Статус: <span className="font-medium">{orderStatusLabel(order.status)}</span>
       </p>
 
       <div className="card divide-y divide-leather-100">
