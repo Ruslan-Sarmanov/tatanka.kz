@@ -79,14 +79,14 @@ export default function BannerForm({ banner }: { banner?: Banner }) {
     setLoading(false);
     if (saveError) return setError(saveError.message);
 
-    router.push("/admin/banners");
+    router.push("/account/admin/banners");
     router.refresh();
   }
 
   async function handleDelete() {
     if (!banner || !confirm("Удалить баннер?")) return;
     await supabase.from("banners").delete().eq("id", banner.id);
-    router.push("/admin/banners");
+    router.push("/account/admin/banners");
     router.refresh();
   }
 
