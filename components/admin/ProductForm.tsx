@@ -170,14 +170,14 @@ export default function ProductForm({
     }
 
     setLoading(false);
-    router.push("/admin/products");
+    router.push("/account/admin/products");
     router.refresh();
   }
 
   async function handleDelete() {
     if (!product || !confirm("Удалить товар?")) return;
     await supabase.from("products").delete().eq("id", product.id);
-    router.push("/admin/products");
+    router.push("/account/admin/products");
     router.refresh();
   }
 
