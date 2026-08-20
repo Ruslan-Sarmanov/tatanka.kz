@@ -64,7 +64,7 @@ export default async function AccountPage() {
       supabase
         .from("products")
         .select(
-          "id, name, price, stock_quantity, is_active, category:categories(name), images:product_images(url, sort_order)"
+          "id, name, price, category_id, stock_quantity, is_active, category:categories(name), images:product_images(url, sort_order)"
         )
         .order("created_at", { ascending: false }),
       supabase.from("categories").select("*").order("sort_order", { ascending: true }),
@@ -78,7 +78,7 @@ export default async function AccountPage() {
       supabase
         .from("order_items")
         .select(
-          "quantity, price, product:products(id, name, price, category_id, images:product_images(url, sort_order), category:categories(slug, name)), order:orders!inner(status)"
+          "quantity, price, product:products(id, name, price, category_id, images:product_images(url, sort_order), category:categories(slug, name)), order:orders!inner(status, created_at)"
         )
         .in("order.status", PAID_ORDER_STATUSES),
       supabase
@@ -91,31 +91,26 @@ export default async function AccountPage() {
     const { data: revenueRows } = await supabase.from("orders").select("total").eq("status", "paid");
     const revenue = (revenueRows ?? []).reduce((sum, o: any) => sum + Number(o.total), 0);
 
-    // Аналитика: группируем позиции заказов по товару.
-    const byProduct = new Map<string, AnalyticsRow>();
-    for (const item of (analyticsItemRows ?? []) as any[]) {
-      const p = item.product;
-      if (!p) continue;
-      const sortedImages = [...(p.images ?? [])].sort((a: any, b: any) => a.sort_order - b.sort_order);
-      const image = sortedImages[0]?.url ?? null;
-      const lineRevenue = Number(item.price) * item.quantity;
-      const existing = byProduct.get(p.id);
-      if (existing) {
-        existing.qty += item.quantity;
-        existing.revenue += lineRevenue;
-      } else {
-        byProduct.set(p.id, {
+    // Аналитика: отдаём "сырые" строки по позициям (без группировки) —
+    // группировка по товару теперь считается на клиенте, ПОСЛЕ применения
+    // фильтра по датам (иначе фильтр по датам не мог бы работать).
+    const analyticsRows: AnalyticsRow[] = ((analyticsItemRows ?? []) as any[])
+      .filter((item) => item.product)
+      .map((item) => {
+        const p = item.product;
+        const sortedImages = [...(p.images ?? [])].sort((a: any, b: any) => a.sort_order - b.sort_order);
+        return {
+          orderDate: (item.order?.created_at ?? "").slice(0, 10),
           productId: p.id,
           name: p.name,
-          image,
+          image: sortedImages[0]?.url ?? null,
           categorySlug: p.category?.slug ?? null,
           categoryName: p.category?.name ?? "—",
           price: Number(p.price),
           qty: item.quantity,
-          revenue: lineRevenue,
-        });
-      }
-    }
+          revenue: Number(item.price) * item.quantity,
+        };
+      });
 
     // Финансы: считаем себестоимость/прибыль по каждому оплаченному заказу.
     const financeOrders: FinanceOrderRow[] = (financeOrdersRaw ?? []).map((o: any) => {
@@ -144,7 +139,7 @@ export default async function AccountPage() {
       categories: categories ?? [],
       banners: banners ?? [],
       adminOrders: adminOrders ?? [],
-      analyticsRows: Array.from(byProduct.values()),
+      analyticsRows,
       financeOrders,
     };
   }
