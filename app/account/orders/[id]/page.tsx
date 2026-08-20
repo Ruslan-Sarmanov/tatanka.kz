@@ -1,7 +1,9 @@
+import Link from "next/link";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { orderStatusLabel } from "@/lib/order-status";
+import { orderStatusLabel, CANCELABLE_ORDER_STATUSES } from "@/lib/order-status";
+import CancelOrderButton from "@/components/CancelOrderButton";
 
 export default async function OrderDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient();
@@ -19,6 +21,8 @@ export default async function OrderDetailPage({ params }: { params: { id: string
 
   if (!order) notFound();
 
+  const canPayOrCancel = CANCELABLE_ORDER_STATUSES.includes(order.status);
+
   return (
     <div className="container-page space-y-6 py-12">
       <h1 className="font-display text-3xl text-leather-800">
@@ -27,6 +31,18 @@ export default async function OrderDetailPage({ params }: { params: { id: string
       <p className="text-leather-600">
         Статус: <span className="font-medium">{orderStatusLabel(order.status)}</span>
       </p>
+
+      {canPayOrCancel && (
+        <div className="card flex flex-wrap items-center gap-4 border-amber-200 bg-amber-50 p-4">
+          <p className="flex-1 text-sm text-amber-800">
+            Оплата ещё не завершена. Можно продолжить оплату или отменить заказ.
+          </p>
+          <Link href={`/checkout/payment?order=${order.id}`} className="btn-primary text-sm">
+            Продолжить оплату
+          </Link>
+          <CancelOrderButton orderId={order.id} />
+        </div>
+      )}
 
       <div className="card divide-y divide-leather-100">
         {order.order_items.map((item: any) => {
