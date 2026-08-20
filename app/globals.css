@@ -6,8 +6,46 @@ body {
   @apply bg-parchment text-ink;
 }
 
-.container-page {
-  @apply mx-auto w-full max-w-6xl px-5 md:px-8;
+/* Все переиспользуемые классы обёрнуты в @layer components — без этого
+   Tailwind вставляет их в скомпилированный CSS в том месте файла, где они
+   физически написаны (после @tailwind utilities), и они начинают
+   перебивать utility-классы вроде w-40/w-auto с той же специфичностью
+   (например .input-field { width: 100% } побеждал w-auto, добавленный
+   рядом на том же элементе). @layer components гарантирует правильный
+   порядок каскада: сначала эти классы, utility-классы всегда смогут их
+   переопределить, как и ожидается по документации Tailwind. */
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-5 md:px-8;
+  }
+
+  .eyebrow {
+    @apply font-mono text-[11px] uppercase tracking-[0.18em] text-saddle-400;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-sm bg-saddle-500 px-6 py-3 text-sm font-medium tracking-wideish text-parchment transition hover:bg-saddle-600 disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-sm border border-saddle-300 bg-transparent px-6 py-3 text-sm font-medium tracking-wideish text-ink transition hover:bg-saddle-100;
+  }
+
+  .btn-ghost-light {
+    @apply inline-flex items-center justify-center gap-2 rounded-sm border border-parchment/30 px-6 py-3 text-sm font-medium tracking-wideish text-parchment transition hover:bg-parchment/10;
+  }
+
+  .input-field {
+    @apply w-full rounded-sm border border-saddle-200 bg-card px-3.5 py-2.5 text-sm text-ink placeholder:text-saddle-400/70 focus:border-saddle-500 focus:outline-none focus:ring-1 focus:ring-saddle-500;
+  }
+
+  .card {
+    @apply rounded-sm border border-saddle-100 bg-card;
+  }
+
+  .tag-order {
+    @apply inline-flex items-center gap-1.5 rounded-sm bg-ink/90 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide text-saddle-200;
+  }
 }
 
 /* ---- Фирменный приём: пунктирная "строчка", как настоящий шов на коже.
@@ -42,32 +80,4 @@ body {
   inset: 10px;
   pointer-events: none;
   border: 1px dashed theme("colors.saddle.300"/60%);
-}
-
-.eyebrow {
-  @apply font-mono text-[11px] uppercase tracking-[0.18em] text-saddle-400;
-}
-
-.btn-primary {
-  @apply inline-flex items-center justify-center gap-2 rounded-sm bg-saddle-500 px-6 py-3 text-sm font-medium tracking-wideish text-parchment transition hover:bg-saddle-600 disabled:opacity-50;
-}
-
-.btn-secondary {
-  @apply inline-flex items-center justify-center gap-2 rounded-sm border border-saddle-300 bg-transparent px-6 py-3 text-sm font-medium tracking-wideish text-ink transition hover:bg-saddle-100;
-}
-
-.btn-ghost-light {
-  @apply inline-flex items-center justify-center gap-2 rounded-sm border border-parchment/30 px-6 py-3 text-sm font-medium tracking-wideish text-parchment transition hover:bg-parchment/10;
-}
-
-.input-field {
-  @apply w-full rounded-sm border border-saddle-200 bg-card px-3.5 py-2.5 text-sm text-ink placeholder:text-saddle-400/70 focus:border-saddle-500 focus:outline-none focus:ring-1 focus:ring-saddle-500;
-}
-
-.card {
-  @apply rounded-sm border border-saddle-100 bg-card;
-}
-
-.tag-order {
-  @apply inline-flex items-center gap-1.5 rounded-sm bg-ink/90 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide text-saddle-200;
 }
