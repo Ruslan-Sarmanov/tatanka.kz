@@ -2,7 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { orderStatusLabel, CANCELABLE_ORDER_STATUSES } from "@/lib/order-status";
+import { CANCELABLE_ORDER_STATUSES } from "@/lib/order-status";
+import OrderStatusBadge from "@/components/OrderStatusBadge";
 
 export default async function OrdersPage() {
   const supabase = createClient();
@@ -44,7 +45,7 @@ export default async function OrdersPage() {
                 <span className="text-leather-500">
                   {new Date(o.created_at).toLocaleDateString("ru-RU")}
                 </span>
-                <span>{orderStatusLabel(o.status)}</span>
+                <OrderStatusBadge status={o.status} />
                 {CANCELABLE_ORDER_STATUSES.includes(o.status) && (
                   <Link
                     href={`/checkout/payment?order=${o.id}`}
