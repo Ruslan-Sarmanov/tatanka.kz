@@ -2,11 +2,28 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 
+const LOW_STOCK_THRESHOLD = 2;
+
+function StockBadge({ qty }: { qty: number | null }) {
+  if (qty === null) {
+    return <span className="text-leather-400">не отслеживается</span>;
+  }
+  if (qty === 0) {
+    return <span className="font-medium text-red-600">0 шт</span>;
+  }
+  if (qty <= LOW_STOCK_THRESHOLD) {
+    return <span className="font-medium text-amber-600">{qty} шт — мало</span>;
+  }
+  return <span className="text-leather-700">{qty} шт</span>;
+}
+
 export default async function AdminProductsPage() {
   const supabase = createClient();
   const { data: products } = await supabase
     .from("products")
-    .select("id, name, price, is_active, category:categories(name), images:product_images(url, sort_order)")
+    .select(
+      "id, name, price, stock_quantity, is_active, category:categories(name), images:product_images(url, sort_order)"
+    )
     .order("created_at", { ascending: false });
 
   return (
@@ -41,6 +58,9 @@ export default async function AdminProductsPage() {
               <span className="flex-1 font-medium">{p.name}</span>
               <span className="text-leather-500">{p.category?.name ?? "—"}</span>
               <span>{Number(p.price).toLocaleString("ru-RU")} ₸</span>
+              <span className="w-28 text-right">
+                <StockBadge qty={p.stock_quantity} />
+              </span>
               <span className={p.is_active ? "text-green-700" : "text-leather-400"}>
                 {p.is_active ? "Активен" : "Скрыт"}
               </span>
