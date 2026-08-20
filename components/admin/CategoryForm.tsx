@@ -100,7 +100,7 @@ export default function CategoryForm({ category }: { category?: Category }) {
     setLoading(false);
     if (saveError) return setError(saveError.message);
 
-    router.push("/admin/categories");
+    router.push("/account/admin/categories");
     router.refresh();
   }
 
@@ -108,7 +108,7 @@ export default function CategoryForm({ category }: { category?: Category }) {
     if (!category) return;
     if (!confirm(`Удалить раздел «${category.name}»? Товары внутри не удаляются, но останутся без раздела.`)) return;
     await supabase.from("categories").delete().eq("id", category.id);
-    router.push("/admin/categories");
+    router.push("/account/admin/categories");
     router.refresh();
   }
 
