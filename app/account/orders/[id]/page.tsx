@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { orderStatusLabel, CANCELABLE_ORDER_STATUSES } from "@/lib/order-status";
 import CancelOrderButton from "@/components/CancelOrderButton";
+import EditOrderDetailsForm from "@/components/EditOrderDetailsForm";
 
 export default async function OrderDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient();
@@ -67,11 +68,26 @@ export default async function OrderDetailPage({ params }: { params: { id: string
         })}
       </div>
 
-      <div className="card p-6 text-sm">
+      <div className="card space-y-3 p-6 text-sm">
         <p className="mb-1"><span className="text-leather-500">Получатель:</span> {order.contact_name}, {order.contact_phone}</p>
         <p className="mb-1"><span className="text-leather-500">Доставка:</span> {order.delivery_city}, {order.delivery_address}</p>
         {order.comment && <p className="mb-1"><span className="text-leather-500">Комментарий:</span> {order.comment}</p>}
         <p className="mt-3 text-lg font-semibold">Итого: {Number(order.total).toLocaleString("ru-RU")} ₸</p>
+
+        {canPayOrCancel && (
+          <div className="pt-2">
+            <EditOrderDetailsForm
+              orderId={order.id}
+              initial={{
+                contact_name: order.contact_name,
+                contact_phone: order.contact_phone,
+                delivery_city: order.delivery_city,
+                delivery_address: order.delivery_address,
+                comment: order.comment,
+              }}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
