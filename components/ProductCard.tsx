@@ -34,7 +34,13 @@ export default function ProductCard({ product }: { product: Product }) {
           {product.is_made_to_order && <span className="tag-order absolute left-3 top-3">Под заказ</span>}
         </div>
         <div className="p-4 pb-3">
-          <h3 className="text-[15px] font-medium text-ink">{product.name}</h3>
+          {/* min-h + line-clamp-2 — название держит одинаковую высоту у
+              всех карточек, даже если у одного товара оно в одну строку,
+              а у другого — в две. Без этого цена/кнопка съезжали по
+              высоте от карточки к карточке в одном ряду. */}
+          <h3 className="line-clamp-2 min-h-[2.6em] text-[15px] font-medium leading-tight text-ink">
+            {product.name}
+          </h3>
         </div>
       </Link>
 
