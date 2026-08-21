@@ -44,13 +44,18 @@ export default function QuickAddButton({
         </>
       ) : (
         <>
+          {/* Классическая иконка тележки — сумка с ручкой читалась
+              неоднозначно (её путали с мешком/корзинкой для покупок
+              непонятного назначения), тележка с колёсиками узнаётся
+              однозначно как "добавить в корзину". */}
           <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 stroke-current" strokeWidth={1.8} fill="none">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              d="M6 7h12l-1 12.5a1.5 1.5 0 0 1-1.5 1.5h-7a1.5 1.5 0 0 1-1.5-1.5L6 7Z"
+              d="M3 4h2l2.4 12.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.6L21 8H6"
             />
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 7V6a3 3 0 0 1 6 0v1" />
+            <circle cx="9.5" cy="20" r="1.4" fill="currentColor" stroke="none" />
+            <circle cx="17.5" cy="20" r="1.4" fill="currentColor" stroke="none" />
           </svg>
           {compact ? "В корзину" : "Купить"}
         </>
