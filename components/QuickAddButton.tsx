@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useCartStore } from "@/lib/cart-store";
+import { useLang } from "@/components/i18n/LangProvider";
 import type { CartItem } from "@/lib/types";
 
 export default function QuickAddButton({
@@ -16,12 +17,13 @@ export default function QuickAddButton({
   compact?: boolean;
 }) {
   const add = useCartStore((s) => s.add);
+  const { dict } = useLang();
   const [justAdded, setJustAdded] = useState(false);
 
   return (
     <button
       type="button"
-      aria-label="Добавить в корзину"
+      aria-label={dict.product.addToCart}
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -40,7 +42,7 @@ export default function QuickAddButton({
           <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0 stroke-white" strokeWidth={2.2} fill="none">
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 12.5 9.5 17 19 7" />
           </svg>
-          В корзине
+          {dict.product.added}
         </>
       ) : (
         <>
@@ -57,7 +59,7 @@ export default function QuickAddButton({
             <circle cx="9.5" cy="20" r="1.4" fill="currentColor" stroke="none" />
             <circle cx="17.5" cy="20" r="1.4" fill="currentColor" stroke="none" />
           </svg>
-          {compact ? "В корзину" : "Купить"}
+          {compact ? dict.product.addToCart : dict.product.buy}
         </>
       )}
     </button>
