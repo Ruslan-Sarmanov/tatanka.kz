@@ -16,7 +16,7 @@ export default function CategoriesTab({ categories }: { categories: Category[] }
           <Link
             key={c.id}
             href={`/account/admin/categories/${c.id}`}
-            className="flex items-center justify-between gap-4 px-4 py-3 text-sm hover:bg-leather-50"
+            className="flex flex-wrap items-center justify-between gap-4 px-4 py-3 text-sm hover:bg-leather-50"
           >
             <span className="font-medium">{c.name}</span>
             <span className="font-mono text-xs text-leather-400">/{c.slug}</span>
