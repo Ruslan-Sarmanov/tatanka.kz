@@ -62,7 +62,10 @@ export default function MessagesThread({
         )}
       </div>
 
-      <form onSubmit={handleSend} className="flex items-end gap-2 border-t border-leather-100 p-3">
+      <form
+        onSubmit={handleSend}
+        className="flex flex-col gap-2 border-t border-leather-100 p-3 sm:flex-row sm:items-end"
+      >
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -72,11 +75,15 @@ export default function MessagesThread({
               handleSend(e);
             }
           }}
-          rows={1}
+          rows={2}
           placeholder={placeholder}
-          className="input-field flex-1 resize-none"
+          className="input-field min-h-[4.5rem] flex-1 resize-none leading-snug sm:min-h-0"
         />
-        <button type="submit" disabled={sending || !text.trim()} className="btn-primary shrink-0">
+        <button
+          type="submit"
+          disabled={sending || !text.trim()}
+          className="btn-primary w-full shrink-0 sm:w-auto"
+        >
           {sending ? "…" : "Отправить"}
         </button>
       </form>
