@@ -31,17 +31,17 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
           );
           const thumb = sortedImages[0]?.url as string | undefined;
           return (
-            <div key={item.id} className="flex items-center gap-4 px-6 py-4 text-sm">
+            <div key={item.id} className="flex flex-wrap items-center gap-4 px-6 py-4 text-sm">
               <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded bg-leather-100">
                 {thumb && <Image src={thumb} alt="" fill className="object-cover" unoptimized />}
               </div>
-              <div className="flex-1">
+              <div className="min-w-0 flex-1">
                 <p className="font-medium">{item.product_name}</p>
                 {item.customization && (
                   <p className="text-leather-500">Пожелания: {item.customization}</p>
                 )}
               </div>
-              <p>{item.quantity} × {Number(item.price).toLocaleString("ru-RU")} ₸</p>
+              <p className="shrink-0">{item.quantity} × {Number(item.price).toLocaleString("ru-RU")} ₸</p>
             </div>
           );
         })}
