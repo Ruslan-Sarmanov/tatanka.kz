@@ -41,7 +41,7 @@ export default function OrderCalendar({
   const todayISO = toISODate(new Date());
 
   return (
-    <div className="w-64 shrink-0 rounded-sm border border-leather-100 p-3">
+    <div className="w-full shrink-0 rounded-sm border border-leather-100 p-3 lg:w-64">
       <div className="mb-2 flex items-center justify-between">
         <button
           type="button"
