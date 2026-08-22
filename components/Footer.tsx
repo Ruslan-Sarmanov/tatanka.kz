@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
+import InstallAppButton from "@/components/InstallAppButton";
 
 export default async function Footer() {
   const supabase = createClient();
@@ -24,6 +25,7 @@ export default async function Footer() {
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-parchment/55">
             Аксессуары из натуральной кожи, изготовленные вручную, небольшими партиями и на заказ.
           </p>
+          <InstallAppButton className="mt-4 inline-flex items-center gap-2 rounded-sm border border-parchment/25 px-4 py-2 text-sm text-parchment/80 transition hover:border-parchment/50 hover:text-parchment" />
         </div>
 
         <div>
