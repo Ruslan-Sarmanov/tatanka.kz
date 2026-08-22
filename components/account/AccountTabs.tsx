@@ -4,7 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import OrderStatusBadge from "@/components/OrderStatusBadge";
 import AdminPanel from "@/components/account/AdminPanel";
-import type { Category, Banner } from "@/lib/types";
+import FeedbackTab from "@/components/FeedbackTab";
+import type { Category, Banner, Message, StoreSettings } from "@/lib/types";
 import type { AnalyticsRow } from "@/components/account/tabs/AnalyticsTab";
 import type { FinanceOrderRow } from "@/components/account/tabs/FinanceTab";
 
@@ -21,12 +22,14 @@ export default function AccountTabs({
   email,
   orders,
   isAdmin,
+  myMessages,
   adminData,
 }: {
   profile: { full_name: string | null; phone: string | null } | null;
   email: string;
   orders: Order[];
   isAdmin: boolean;
+  myMessages: Message[];
   adminData: {
     productsCount: number;
     ordersCount: number;
@@ -38,15 +41,26 @@ export default function AccountTabs({
     adminOrders: any[];
     analyticsRows: AnalyticsRow[];
     financeOrders: FinanceOrderRow[];
+    allMessages: Message[];
+    profiles: Record<string, { full_name: string | null }>;
+    storeSettings: StoreSettings | null;
   } | null;
 }) {
+  // "Обратная связь" — только у обычных покупателей: у админа для этого
+  // есть вкладка "Сообщения" внутри "Управления магазином", где видны
+  // переписки со всеми покупателями сразу.
   const tabs = [
     { id: "profile", label: "Профиль" },
     { id: "orders", label: "Последние заказы" },
+    ...(!isAdmin ? [{ id: "feedback", label: "Обратная связь" }] : []),
     ...(isAdmin ? [{ id: "admin", label: "Управление магазином" }] : []),
   ] as const;
 
   const [active, setActive] = useState<(typeof tabs)[number]["id"]>("profile");
+
+  const unreadFeedbackCount = myMessages.filter(
+    (m) => m.sender_role === "admin" && !m.read_by_customer
+  ).length;
 
   return (
     <div>
@@ -65,6 +79,11 @@ export default function AccountTabs({
             {t.label}
             {active === t.id && (
               <span className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-saddle-500" />
+            )}
+            {t.id === "feedback" && unreadFeedbackCount > 0 && (
+              <span className="ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-medium text-white align-middle">
+                {unreadFeedbackCount}
+              </span>
             )}
             {t.id === "admin" && adminData && adminData.newOrdersCount > 0 && (
               <span className="ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-medium text-white align-middle">
@@ -124,6 +143,8 @@ export default function AccountTabs({
         </div>
       )}
 
+      {active === "feedback" && !isAdmin && <FeedbackTab initialMessages={myMessages} />}
+
       {active === "admin" && isAdmin && adminData && (
         <AdminPanel
           productsCount={adminData.productsCount}
@@ -136,6 +157,9 @@ export default function AccountTabs({
           orders={adminData.adminOrders}
           analyticsRows={adminData.analyticsRows}
           financeOrders={adminData.financeOrders}
+          allMessages={adminData.allMessages}
+          profiles={adminData.profiles}
+          storeSettings={adminData.storeSettings}
         />
       )}
     </div>
