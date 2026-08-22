@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { useLang } from "@/components/i18n/LangProvider";
 
 export default function CatalogMenu({
   categories,
@@ -10,6 +11,7 @@ export default function CatalogMenu({
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const { dict } = useLang();
 
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {
@@ -25,7 +27,7 @@ export default function CatalogMenu({
         onClick={() => setOpen(!open)}
         className="flex items-center gap-1.5 text-sm text-ink/80 transition hover:text-saddle-500"
       >
-        Каталог
+        {dict.header.catalog}
         <svg width="9" height="6" viewBox="0 0 9 6" className={`transition ${open ? "rotate-180" : ""}`}>
           <path d="M1 1L4.5 5L8 1" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" />
         </svg>
