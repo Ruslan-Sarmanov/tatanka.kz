@@ -1,0 +1,403 @@
+export type Lang = "ru" | "kk";
+
+export const LANG_COOKIE = "lang";
+export const DEFAULT_LANG: Lang = "ru";
+
+// Переводы организованы по разделам сайта — так проще найти нужную
+// строку и не потерять контекст при добавлении новых страниц. Казахский
+// перевод выполнен машинным способом (грамматически корректный), стоит
+// попросить носителя языка сверить формулировки перед официальным
+// запуском казахской версии.
+const dictionaries = {
+  ru: {
+    common: {
+      priceCurrency: "₸",
+      loading: "Загрузка…",
+      more: "Показать ещё",
+      reset: "Сбросить",
+      apply: "Применить",
+      close: "Закрыть",
+      back: "Назад",
+      home: "Главная",
+    },
+    header: {
+      catalog: "Каталог",
+      cabinet: "Кабинет",
+      login: "Войти",
+    },
+    footer: {
+      tagline: "Аксессуары из натуральной кожи, изготовленные вручную, небольшими партиями и на заказ.",
+      catalog: "Каталог",
+      shop: "Магазин",
+      cabinet: "Личный кабинет",
+      cart: "Корзина",
+      about: "О бренде",
+      contact: "Контакты",
+      madeToOrder: "Изготовление под заказ",
+      country: "Казахстан",
+    },
+    home: {
+      heroEyebrow: "Ручная работа · Под заказ · Казахстан",
+      heroTitleLine1: "Кожа, которая",
+      heroTitleLine2: "служит десятилетиями",
+      heroText:
+        "TATANKA — кошельки, портмоне, сумки и другие аксессуары из натуральной кожи растительного дубления. Каждое изделие вырезано, прошито и собрано вручную под ваш заказ.",
+      viewCatalog: "Смотреть каталог",
+      aboutBrand: "О бренде",
+      approachEyebrow: "Наш подход",
+      brandTitle:
+        "Татанка — древнее слово для бизона: сила, выносливость, материал, который веками служил людям.",
+      brandText:
+        "Мы работаем с кожей растительного дубления небольшими партиями и по индивидуальным размерам. Никакого конвейера — каждое изделие проходит через руки одного мастера, от раскроя до финальной прошивки.",
+      viewItems: "Смотреть изделия",
+      assortmentEyebrow: "Каталог",
+      assortmentTitle: "Ассортимент",
+      newArrivals: "Новинки",
+      emptySection: "В этом разделе пока нет товаров.",
+      wholeCatalog: "Весь каталог",
+      allInSection: (name: string) => `Все товары раздела «${name}»`,
+    },
+    catalog: {
+      eyebrow: "Каталог",
+      title: "Все изделия",
+      typeFilter: "Тип",
+      allTypes: "Все типы",
+      genderFilter: "Для кого",
+      anyGender: "Для него/неё — любой",
+      men: "Для него",
+      women: "Для неё",
+      unisex: "Унисекс",
+      materialFilter: "Материал",
+      anyMaterial: "Любой материал",
+      colorFilter: "Цвет",
+      anyColor: "Любой цвет",
+      priceFrom: "Цена, ₸:",
+      from: "от",
+      to: "до",
+      resetFilters: "Сбросить фильтры",
+      empty: "По этому фильтру пока ничего не нашлось.",
+      categoryEmpty: "В этом разделе пока нет товаров — загляните позже.",
+    },
+    product: {
+      madeToOrder: "Под заказ",
+      leadTimeDays: (days: number) => `~${days} дней`,
+      material: "Материал",
+      color: "Цвет",
+      forWhom: "Для кого",
+      quantity: "Количество",
+      addToCart: "В корзину",
+      buy: "Купить",
+      added: "В корзине",
+      customizationLabel: "Пожелания к заказу",
+      customizationPlaceholder: "Например: размер, цвет, гравировка на изделии",
+      photoSoon: "Фото скоро",
+      removeFromFavorites: "Убрать из избранного",
+      addToFavorites: "Добавить в избранное",
+    },
+    cart: {
+      title: "Корзина",
+      empty: "Корзина пуста",
+      toCatalog: "В каталог",
+      remove: "Удалить",
+      total: "Итого",
+      checkout: "Оформить заказ",
+      customization: "Пожелания",
+    },
+    checkout: {
+      title: "Оформление заказа",
+      contactName: "Имя получателя",
+      contactPhone: "Телефон",
+      contactEmail: "Email",
+      deliveryCity: "Город",
+      deliveryAddress: "Адрес доставки",
+      comment: "Комментарий к заказу",
+      commentPlaceholder: "Необязательно",
+      orderSummary: "Ваш заказ",
+      submit: "Оформить и перейти к оплате",
+      submitting: "Оформляем…",
+      loginRequired: "Требуется авторизация",
+      payTitle: "Оплата заказа",
+      payButton: "Оплатить через Robokassa",
+      redirecting: "Переходим к оплате…",
+      successTitle: "Оплата прошла успешно",
+      successOrder: (num: string, sum: string) => `Заказ №${num} на сумму ${sum} ₸ оплачен.`,
+      successFallback:
+        "Спасибо! Как только оплата будет подтверждена, статус заказа обновится в личном кабинете.",
+      successNote: "Мы начнём изготовление вашего изделия и свяжемся с вами по указанным контактам.",
+      myOrders: "Мои заказы",
+      failTitle: "Оплата не прошла",
+      failText: "Платёж не был завершён. Попробуйте ещё раз или свяжитесь с нами, если проблема повторяется.",
+      tryAgain: "Попробовать снова",
+    },
+    contact: {
+      eyebrow: "Связаться с нами",
+      title: "Контакты",
+      phone: "Телефон",
+      whatsapp: "WhatsApp",
+      email: "Email",
+      address: "Адрес",
+      workingHours: "Часы работы",
+      comingSoon: "Контактные данные скоро появятся здесь.",
+      questionTitle: "Есть вопрос по заказу?",
+      questionText:
+        "Быстрее всего мы ответим в переписке в личном кабинете — там же видна вся история по вашим заказам.",
+      writeInCabinet: "Написать в личном кабинете",
+      loginAndWrite: "Войти и написать",
+    },
+    langToggle: {
+      label: "Язык",
+    },
+  },
+  kk: {
+    common: {
+      priceCurrency: "₸",
+      loading: "Жүктелуде…",
+      more: "Тағы көрсету",
+      reset: "Тазарту",
+      apply: "Қолдану",
+      close: "Жабу",
+      back: "Артқа",
+      home: "Басты бет",
+    },
+    header: {
+      catalog: "Каталог",
+      cabinet: "Кабинет",
+      login: "Кіру",
+    },
+    footer: {
+      tagline: "Қолдан жасалған табиғи былғарыдан жасалған аксессуарлар, шағын топтамалармен және тапсырыспен.",
+      catalog: "Каталог",
+      shop: "Дүкен",
+      cabinet: "Жеке кабинет",
+      cart: "Себет",
+      about: "Бренд туралы",
+      contact: "Байланыс",
+      madeToOrder: "Тапсырыс бойынша дайындау",
+      country: "Қазақстан",
+    },
+    home: {
+      heroEyebrow: "Қолдан жасалған · Тапсырыспен · Қазақстан",
+      heroTitleLine1: "Ондаған жыл",
+      heroTitleLine2: "қызмет ететін былғары",
+      heroText:
+        "TATANKA — өсімдік илеуінен жасалған табиғи былғарыдан жасалған әмияндар, портмоне, сөмкелер және басқа аксессуарлар. Әр бұйым сіздің тапсырысыңыз бойынша қолмен кесіліп, тігіліп, жиналады.",
+      viewCatalog: "Каталогты қарау",
+      aboutBrand: "Бренд туралы",
+      approachEyebrow: "Біздің тәсіліміз",
+      brandTitle:
+        "Татанка — бизон дегенді білдіретін көне сөз: күш, төзімділік, ғасырлар бойы адамдарға қызмет еткен материал.",
+      brandText:
+        "Біз өсімдік илеуінен жасалған былғарымен шағын топтамалармен және жеке өлшемдер бойынша жұмыс істейміз. Конвейер жоқ — әр бұйым бір шебердің қолынан өтеді, кесуден бастап соңғы тігіске дейін.",
+      viewItems: "Бұйымдарды қарау",
+      assortmentEyebrow: "Каталог",
+      assortmentTitle: "Ассортимент",
+      newArrivals: "Жаңалықтар",
+      emptySection: "Бұл бөлімде әзірге тауарлар жоқ.",
+      wholeCatalog: "Барлық каталог",
+      allInSection: (name: string) => `«${name}» бөлімінің барлық тауарлары`,
+    },
+    catalog: {
+      eyebrow: "Каталог",
+      title: "Барлық бұйымдар",
+      typeFilter: "Түрі",
+      allTypes: "Барлық түрлері",
+      genderFilter: "Кімге арналған",
+      anyGender: "Ер/әйел — кез келген",
+      men: "Ер адамға",
+      women: "Әйел адамға",
+      unisex: "Унисекс",
+      materialFilter: "Материал",
+      anyMaterial: "Кез келген материал",
+      colorFilter: "Түс",
+      anyColor: "Кез келген түс",
+      priceFrom: "Баға, ₸:",
+      from: "бастап",
+      to: "дейін",
+      resetFilters: "Сүзгілерді тазарту",
+      empty: "Бұл сүзгі бойынша ештеңе табылмады.",
+      categoryEmpty: "Бұл бөлімде әзірге тауарлар жоқ — кейінірек қараңыз.",
+    },
+    product: {
+      madeToOrder: "Тапсырыс бойынша",
+      leadTimeDays: (days: number) => `~${days} күн`,
+      material: "Материал",
+      color: "Түс",
+      forWhom: "Кімге арналған",
+      quantity: "Саны",
+      addToCart: "Себетке",
+      buy: "Сатып алу",
+      added: "Себетте",
+      customizationLabel: "Тапсырысқа тілектер",
+      customizationPlaceholder: "Мысалы: өлшем, түс, бұйымдағы гравировка",
+      photoSoon: "Фото жақында",
+      removeFromFavorites: "Таңдаулылардан алып тастау",
+      addToFavorites: "Таңдаулыларға қосу",
+    },
+    cart: {
+      title: "Себет",
+      empty: "Себет бос",
+      toCatalog: "Каталогқа",
+      remove: "Жою",
+      total: "Барлығы",
+      checkout: "Тапсырыс беру",
+      customization: "Тілектер",
+    },
+    checkout: {
+      title: "Тапсырысты рәсімдеу",
+      contactName: "Алушының аты",
+      contactPhone: "Телефон",
+      contactEmail: "Email",
+      deliveryCity: "Қала",
+      deliveryAddress: "Жеткізу мекенжайы",
+      comment: "Тапсырысқа түсініктеме",
+      commentPlaceholder: "Міндетті емес",
+      orderSummary: "Сіздің тапсырысыңыз",
+      submit: "Рәсімдеу және төлеуге өту",
+      submitting: "Рәсімделуде…",
+      loginRequired: "Кіру қажет",
+      payTitle: "Тапсырысты төлеу",
+      payButton: "Robokassa арқылы төлеу",
+      redirecting: "Төлеуге өтуде…",
+      successTitle: "Төлем сәтті өтті",
+      successOrder: (num: string, sum: string) => `№${num} тапсырыс, ${sum} ₸ сомасына төленді.`,
+      successFallback:
+        "Рахмет! Төлем расталған бойда тапсырыс мәртебесі жеке кабинетте жаңартылады.",
+      successNote: "Біз бұйымыңызды дайындауды бастаймыз және көрсетілген байланыстар бойынша хабарласамыз.",
+      myOrders: "Менің тапсырыстарым",
+      failTitle: "Төлем өтпеді",
+      failText: "Төлем аяқталмады. Қайта көріңіз немесе мәселе қайталанса, бізбен хабарласыңыз.",
+      tryAgain: "Қайта көру",
+    },
+    contact: {
+      eyebrow: "Бізбен байланысыңыз",
+      title: "Байланыс",
+      phone: "Телефон",
+      whatsapp: "WhatsApp",
+      email: "Email",
+      address: "Мекенжай",
+      workingHours: "Жұмыс уақыты",
+      comingSoon: "Байланыс деректері жақында осында пайда болады.",
+      questionTitle: "Тапсырыс бойынша сұрағыңыз бар ма?",
+      questionText:
+        "Ең жылдам жауапты жеке кабинеттегі хат алмасудан аласыз — онда тапсырыстарыңыздың барлық тарихы да көрінеді.",
+      writeInCabinet: "Жеке кабинетте жазу",
+      loginAndWrite: "Кіру және жазу",
+    },
+    langToggle: {
+      label: "Тіл",
+    },
+  },
+};
+
+export type Dictionary = {
+  common: Record<"priceCurrency" | "loading" | "more" | "reset" | "apply" | "close" | "back" | "home", string>;
+  header: Record<"catalog" | "cabinet" | "login", string>;
+  footer: Record<
+    "tagline" | "catalog" | "shop" | "cabinet" | "cart" | "about" | "contact" | "madeToOrder" | "country",
+    string
+  >;
+  home: Record<
+    | "heroEyebrow"
+    | "heroTitleLine1"
+    | "heroTitleLine2"
+    | "heroText"
+    | "viewCatalog"
+    | "aboutBrand"
+    | "approachEyebrow"
+    | "brandTitle"
+    | "brandText"
+    | "viewItems"
+    | "assortmentEyebrow"
+    | "assortmentTitle"
+    | "newArrivals"
+    | "emptySection"
+    | "wholeCatalog",
+    string
+  > & { allInSection: (name: string) => string };
+  catalog: Record<
+    | "eyebrow"
+    | "title"
+    | "typeFilter"
+    | "allTypes"
+    | "genderFilter"
+    | "anyGender"
+    | "men"
+    | "women"
+    | "unisex"
+    | "materialFilter"
+    | "anyMaterial"
+    | "colorFilter"
+    | "anyColor"
+    | "priceFrom"
+    | "from"
+    | "to"
+    | "resetFilters"
+    | "empty"
+    | "categoryEmpty",
+    string
+  >;
+  product: Record<
+    | "madeToOrder"
+    | "material"
+    | "color"
+    | "forWhom"
+    | "quantity"
+    | "addToCart"
+    | "buy"
+    | "added"
+    | "customizationLabel"
+    | "customizationPlaceholder"
+    | "photoSoon"
+    | "removeFromFavorites"
+    | "addToFavorites",
+    string
+  > & { leadTimeDays: (days: number) => string };
+  cart: Record<"title" | "empty" | "toCatalog" | "remove" | "total" | "checkout" | "customization", string>;
+  checkout: Record<
+    | "title"
+    | "contactName"
+    | "contactPhone"
+    | "contactEmail"
+    | "deliveryCity"
+    | "deliveryAddress"
+    | "comment"
+    | "commentPlaceholder"
+    | "orderSummary"
+    | "submit"
+    | "submitting"
+    | "loginRequired"
+    | "payTitle"
+    | "payButton"
+    | "redirecting"
+    | "successTitle"
+    | "successFallback"
+    | "successNote"
+    | "myOrders"
+    | "failTitle"
+    | "failText"
+    | "tryAgain",
+    string
+  > & { successOrder: (num: string, sum: string) => string };
+  contact: Record<
+    | "eyebrow"
+    | "title"
+    | "phone"
+    | "whatsapp"
+    | "email"
+    | "address"
+    | "workingHours"
+    | "comingSoon"
+    | "questionTitle"
+    | "questionText"
+    | "writeInCabinet"
+    | "loginAndWrite",
+    string
+  >;
+  langToggle: Record<"label", string>;
+};
+
+const typedDictionaries: Record<Lang, Dictionary> = dictionaries;
+
+export function getDictionary(lang: Lang): Dictionary {
+  return typedDictionaries[lang] ?? typedDictionaries[DEFAULT_LANG];
+}
