@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Category, Banner } from "@/lib/types";
+import type { Category, Banner, Message, StoreSettings } from "@/lib/types";
 import OverviewTab from "./tabs/OverviewTab";
 import ProductsTab from "./tabs/ProductsTab";
 import CategoriesTab from "./tabs/CategoriesTab";
@@ -9,6 +9,8 @@ import BannersTab from "./tabs/BannersTab";
 import OrdersTab from "./tabs/OrdersTab";
 import AnalyticsTab, { type AnalyticsRow } from "./tabs/AnalyticsTab";
 import FinanceTab, { type FinanceOrderRow } from "./tabs/FinanceTab";
+import MessagesTab from "./tabs/MessagesTab";
+import StoreSettingsForm from "@/components/admin/StoreSettingsForm";
 
 const TABS = [
   { id: "overview", label: "Обзор" },
@@ -16,8 +18,10 @@ const TABS = [
   { id: "categories", label: "Категории" },
   { id: "banners", label: "Баннеры" },
   { id: "orders", label: "Заказы" },
+  { id: "messages", label: "Сообщения" },
   { id: "analytics", label: "Аналитика" },
   { id: "finance", label: "Финансы" },
+  { id: "settings", label: "Настройки" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -33,6 +37,9 @@ export default function AdminPanel({
   orders,
   analyticsRows,
   financeOrders,
+  allMessages,
+  profiles,
+  storeSettings,
 }: {
   productsCount: number;
   ordersCount: number;
@@ -44,8 +51,15 @@ export default function AdminPanel({
   orders: any[];
   analyticsRows: AnalyticsRow[];
   financeOrders: FinanceOrderRow[];
+  allMessages: Message[];
+  profiles: Record<string, { full_name: string | null }>;
+  storeSettings: StoreSettings | null;
 }) {
   const [active, setActive] = useState<TabId>("overview");
+
+  const unreadMessagesCount = allMessages.filter(
+    (m) => m.sender_role === "customer" && !m.read_by_admin
+  ).length;
 
   return (
     <div className="card overflow-hidden">
@@ -75,6 +89,11 @@ export default function AdminPanel({
                   {newOrdersCount}
                 </span>
               )}
+              {t.id === "messages" && unreadMessagesCount > 0 && (
+                <span className="ml-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-medium text-white">
+                  {unreadMessagesCount}
+                </span>
+              )}
             </button>
           ))}
         </nav>
@@ -93,8 +112,10 @@ export default function AdminPanel({
           {active === "categories" && <CategoriesTab categories={categories} />}
           {active === "banners" && <BannersTab banners={banners} />}
           {active === "orders" && <OrdersTab orders={orders} />}
+          {active === "messages" && <MessagesTab messages={allMessages} profiles={profiles} />}
           {active === "analytics" && <AnalyticsTab rows={analyticsRows} categories={categories} />}
           {active === "finance" && <FinanceTab orders={financeOrders} />}
+          {active === "settings" && <StoreSettingsForm settings={storeSettings} />}
         </div>
       </div>
     </div>
