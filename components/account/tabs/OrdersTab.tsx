@@ -93,14 +93,14 @@ export default function OrdersTab({ orders }: { orders: any[] }) {
               value={search}
               onChange={(e) => { setSearch(e.target.value); setVisibleCount(PAGE_SIZE); }}
               className="input-field"
-              style={{ width: "18rem" }}
+              style={{ width: "18rem", maxWidth: "100%" }}
             />
             <input
               type="date"
               value={dateFrom}
               onChange={(e) => { setDateFrom(e.target.value); setCalendarDate(null); setVisibleCount(PAGE_SIZE); }}
               className="input-field"
-              style={{ width: "9.5rem" }}
+              style={{ width: "9.5rem", maxWidth: "100%" }}
             />
             <span className="text-leather-400">—</span>
             <input
@@ -108,7 +108,7 @@ export default function OrdersTab({ orders }: { orders: any[] }) {
               value={dateTo}
               onChange={(e) => { setDateTo(e.target.value); setCalendarDate(null); setVisibleCount(PAGE_SIZE); }}
               className="input-field"
-              style={{ width: "9.5rem" }}
+              style={{ width: "9.5rem", maxWidth: "100%" }}
             />
             {hasFilters && (
               <button
