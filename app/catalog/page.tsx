@@ -1,7 +1,15 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/ProductCard";
 import CatalogFilters from "@/components/CatalogFilters";
+
+export const metadata: Metadata = {
+  title: "Каталог",
+  description:
+    "Весь каталог кожаных изделий ручной работы TATANKA.KZ — кошельки, портмоне, сумки, картхолдеры, ключницы. Натуральная кожа, изготовление в Казахстане.",
+  alternates: { canonical: "/catalog" },
+};
 
 export default async function CatalogPage({
   searchParams,
