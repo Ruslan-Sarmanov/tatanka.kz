@@ -67,11 +67,11 @@ export default async function AdminFinancePage({
       <form className="mb-6 flex flex-wrap items-end gap-3" method="GET">
         <div>
           <label className="mb-1 block text-xs text-leather-500">С</label>
-          <input type="date" name="from" defaultValue={searchParams.from ?? ""} className="input-field" style={{ width: "10rem" }} />
+          <input type="date" name="from" defaultValue={searchParams.from ?? ""} className="input-field" style={{ width: "10rem", maxWidth: "100%" }} />
         </div>
         <div>
           <label className="mb-1 block text-xs text-leather-500">По</label>
-          <input type="date" name="to" defaultValue={searchParams.to ?? ""} className="input-field" style={{ width: "10rem" }} />
+          <input type="date" name="to" defaultValue={searchParams.to ?? ""} className="input-field" style={{ width: "10rem", maxWidth: "100%" }} />
         </div>
         <button type="submit" className="btn-secondary">Применить</button>
       </form>
@@ -110,34 +110,36 @@ export default async function AdminFinancePage({
         </div>
       ) : (
         <div className="card overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="border-b border-leather-100 bg-leather-50 text-left text-xs uppercase text-leather-500">
-              <tr>
-                <th className="px-4 py-3">Заказ</th>
-                <th className="px-4 py-3">Дата</th>
-                <th className="px-4 py-3">Статус</th>
-                <th className="px-4 py-3">Выручка</th>
-                <th className="px-4 py-3">Себестоимость</th>
-                <th className="px-4 py-3">Прибыль</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-leather-100">
-              {rows.map((r) => (
-                <tr key={r.id}>
-                  <td className="px-4 py-3 font-medium">№{r.orderNumber}</td>
-                  <td className="px-4 py-3 text-leather-500">
-                    {new Date(r.createdAt).toLocaleDateString("ru-RU")}
-                  </td>
-                  <td className="px-4 py-3">{orderStatusLabel(r.status)}</td>
-                  <td className="px-4 py-3">{r.total.toLocaleString("ru-RU")} ₸</td>
-                  <td className="px-4 py-3 text-leather-500">{r.cost.toLocaleString("ru-RU")} ₸</td>
-                  <td className="px-4 py-3 font-medium text-green-700">
-                    {r.profit.toLocaleString("ru-RU")} ₸
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="border-b border-leather-100 bg-leather-50 text-left text-xs uppercase text-leather-500">
+                <tr>
+                  <th className="px-4 py-3">Заказ</th>
+                  <th className="px-4 py-3">Дата</th>
+                  <th className="px-4 py-3">Статус</th>
+                  <th className="px-4 py-3">Выручка</th>
+                  <th className="px-4 py-3">Себестоимость</th>
+                  <th className="px-4 py-3">Прибыль</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-leather-100">
+                {rows.map((r) => (
+                  <tr key={r.id}>
+                    <td className="px-4 py-3 font-medium">№{r.orderNumber}</td>
+                    <td className="px-4 py-3 text-leather-500">
+                      {new Date(r.createdAt).toLocaleDateString("ru-RU")}
+                    </td>
+                    <td className="px-4 py-3">{orderStatusLabel(r.status)}</td>
+                    <td className="px-4 py-3">{r.total.toLocaleString("ru-RU")} ₸</td>
+                    <td className="px-4 py-3 text-leather-500">{r.cost.toLocaleString("ru-RU")} ₸</td>
+                    <td className="px-4 py-3 font-medium text-green-700">
+                      {r.profit.toLocaleString("ru-RU")} ₸
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
