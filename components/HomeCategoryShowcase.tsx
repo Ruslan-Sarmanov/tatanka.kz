@@ -49,8 +49,11 @@ export default function HomeCategoryShowcase({
       {/* Вкладки-плитки с фото — как раньше выглядели разделы каталога на
           главной, только теперь они же и переключают показанные товары.
           Новинки + каждый раздел, объединено в один блок вместо двух
-          отдельных секций. Переключение на клиенте, без перехода. */}
-      <div className="mb-8 flex gap-4 overflow-x-auto pb-1">
+          отдельных секций. Переключение на клиенте, без перехода.
+          Каждая вкладка — фиксированной ширины (w-20/w-24), поэтому
+          подпись под фото не меняет ширину колонки при переключении —
+          раньше из-за разной длины названий разделов вкладки "плясали". */}
+      <div className="no-scrollbar mb-8 flex gap-4 overflow-x-auto pb-1">
         {tabs.map((t) => {
           const isActive = active === t.id;
           return (
@@ -58,11 +61,13 @@ export default function HomeCategoryShowcase({
               key={t.id}
               type="button"
               onClick={() => setActive(t.id)}
-              className="flex shrink-0 flex-col items-center gap-2"
+              className="flex w-20 shrink-0 flex-col items-center gap-2 md:w-24"
             >
               <span
                 className={`stitch-frame relative h-20 w-20 overflow-hidden rounded-sm bg-saddle-100 transition md:h-24 md:w-24 ${
-                  isActive ? "ring-2 ring-saddle-500 ring-offset-2 ring-offset-parchment" : "opacity-80 hover:opacity-100"
+                  isActive
+                    ? "border-2 border-saddle-500"
+                    : "border-2 border-transparent opacity-80 hover:opacity-100"
                 }`}
               >
                 {t.image ? (
@@ -71,10 +76,18 @@ export default function HomeCategoryShowcase({
                   <div className="flex h-full items-center justify-center bg-saddle-100" />
                 )}
               </span>
-              <span
-                className={`text-xs font-medium ${isActive ? "text-saddle-600" : "text-leather-500"}`}
-              >
-                {t.label}
+              {/* Подпись — фиксированный размер шрифта и вес всегда
+                  одинаковы (меняется только цвет), плюс полоска-индикатор
+                  снизу у активного раздела — сразу видно, какой выбран. */}
+              <span className="flex flex-col items-center gap-1">
+                <span
+                  className={`line-clamp-2 text-center text-xs font-medium leading-tight ${
+                    isActive ? "text-saddle-600" : "text-leather-500"
+                  }`}
+                >
+                  {t.label}
+                </span>
+                <span className={`h-0.5 w-6 rounded-full ${isActive ? "bg-saddle-500" : "bg-transparent"}`} />
               </span>
             </button>
           );
@@ -110,7 +123,7 @@ export default function HomeCategoryShowcase({
 
           <div
             ref={scrollerRef}
-            className="flex snap-x gap-5 overflow-x-auto scroll-smooth pb-2"
+            className="no-scrollbar flex snap-x gap-5 overflow-x-auto scroll-smooth pb-2"
           >
             {activeProducts.map((p) => (
               <div key={p.id} className="w-[calc(50%-0.625rem)] shrink-0 snap-start sm:w-56">
