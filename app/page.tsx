@@ -18,8 +18,22 @@ export default async function HomePage() {
       .order("created_at", { ascending: false }),
   ]);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "TATANKA.KZ",
+    url: "https://tatanka.kz",
+    logo: "https://tatanka.kz/icons/icon-512.png",
+    description:
+      "Кожаные аксессуары ручной работы — кошельки, портмоне, сумки, картхолдеры, ключницы. Натуральная кожа растительного дубления, изготовление в Казахстане.",
+    address: { "@type": "PostalAddress", addressCountry: "KZ" },
+  };
+
   return (
     <div>
+      {/* eslint-disable-next-line react/no-danger */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+
       {/* ---- Герой: тёмная кожа, крупная метка бизона, клеймо-заголовок ---- */}
       <section className="relative overflow-hidden bg-ink">
         <Image
