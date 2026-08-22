@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import OrderStatusBadge from "@/components/OrderStatusBadge";
+import DeleteOrderButton from "@/components/admin/DeleteOrderButton";
 
 export default async function AdminOrdersPage() {
   const supabase = createClient();
@@ -18,12 +19,13 @@ export default async function AdminOrdersPage() {
 
       <div className="card divide-y divide-leather-100">
         {(orders ?? []).map((o: any) => (
-          <Link
-            key={o.id}
-            href={`/account/admin/orders/${o.id}`}
-            className="block px-4 py-3 text-sm hover:bg-leather-50"
-          >
-            <div className="flex flex-wrap items-center gap-3">
+          <div key={o.id} className="relative px-4 py-3 text-sm hover:bg-leather-50">
+            <Link
+              href={`/account/admin/orders/${o.id}`}
+              className="absolute inset-0 z-0"
+              aria-label={`Заказ №${o.order_number}`}
+            />
+            <div className="relative z-10 flex flex-wrap items-center gap-3">
               <span className="font-medium">№{o.order_number}</span>
               <span className="text-leather-600">{o.contact_name}</span>
               <span className="text-leather-500">
@@ -31,9 +33,10 @@ export default async function AdminOrdersPage() {
               </span>
               <OrderStatusBadge status={o.status} />
               <span className="ml-auto font-medium">{Number(o.total).toLocaleString("ru-RU")} ₸</span>
+              <DeleteOrderButton orderId={o.id} orderNumber={o.order_number} />
             </div>
 
-            <div className="mt-2 flex flex-wrap gap-3">
+            <div className="relative z-10 mt-2 flex flex-wrap gap-3">
               {o.order_items.map((item: any) => {
                 const sortedImages = [...(item.product?.images ?? [])].sort(
                   (a: any, b: any) => a.sort_order - b.sort_order
@@ -52,7 +55,7 @@ export default async function AdminOrdersPage() {
                 );
               })}
             </div>
-          </Link>
+          </div>
         ))}
         {(orders ?? []).length === 0 && (
           <p className="px-4 py-8 text-center text-sm text-leather-500">Заказов пока нет.</p>
