@@ -144,6 +144,23 @@ const dictionaries = {
       writeInCabinet: "Написать в личном кабинете",
       loginAndWrite: "Войти и написать",
     },
+    account: {
+      title: "Личный кабинет",
+      signOut: "Выйти",
+      tabProfile: "Профиль",
+      tabOrders: "Последние заказы",
+      tabFeedback: "Обратная связь",
+      tabAdmin: "Управление магазином",
+      name: "Имя",
+      phone: "Телефон",
+      email: "Email",
+      recentOrders: "Последние заказы",
+      allOrders: "Все заказы",
+      noOrders: "У вас пока нет заказов.",
+      orderNumber: (num: number) => `Заказ №${num}`,
+      feedbackTitle: "Обратная связь",
+      feedbackText: "Есть вопрос по заказу или изделию? Напишите нам — отвечаем обычно в течение дня.",
+    },
     langToggle: {
       label: "Язык",
     },
@@ -283,6 +300,23 @@ const dictionaries = {
       writeInCabinet: "Жеке кабинетте жазу",
       loginAndWrite: "Кіру және жазу",
     },
+    account: {
+      title: "Жеке кабинет",
+      signOut: "Шығу",
+      tabProfile: "Профиль",
+      tabOrders: "Соңғы тапсырыстар",
+      tabFeedback: "Кері байланыс",
+      tabAdmin: "Дүкенді басқару",
+      name: "Аты",
+      phone: "Телефон",
+      email: "Email",
+      recentOrders: "Соңғы тапсырыстар",
+      allOrders: "Барлық тапсырыстар",
+      noOrders: "Сізде әзірге тапсырыстар жоқ.",
+      orderNumber: (num: number) => `№${num} тапсырыс`,
+      feedbackTitle: "Кері байланыс",
+      feedbackText: "Тапсырыс немесе бұйым бойынша сұрағыңыз бар ма? Бізге жазыңыз — әдетте бір күн ішінде жауап береміз.",
+    },
     langToggle: {
       label: "Тіл",
     },
@@ -393,6 +427,23 @@ export type Dictionary = {
     | "loginAndWrite",
     string
   >;
+  account: Record<
+    | "title"
+    | "signOut"
+    | "tabProfile"
+    | "tabOrders"
+    | "tabFeedback"
+    | "tabAdmin"
+    | "name"
+    | "phone"
+    | "email"
+    | "recentOrders"
+    | "allOrders"
+    | "noOrders"
+    | "feedbackTitle"
+    | "feedbackText",
+    string
+  > & { orderNumber: (num: number) => string };
   langToggle: Record<"label", string>;
 };
 
