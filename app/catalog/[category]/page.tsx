@@ -1,8 +1,35 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/ProductCard";
 import PromoBanners from "@/components/PromoBanners";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { category: string };
+}): Promise<Metadata> {
+  const supabase = createClient();
+  const { data: category } = await supabase
+    .from("categories")
+    .select("name, description")
+    .eq("slug", params.category)
+    .single();
+
+  if (!category) return {};
+
+  const description =
+    category.description ??
+    `${category.name} из натуральной кожи ручной работы — купить в TATANKA.KZ, Казахстан.`;
+
+  return {
+    title: category.name,
+    description,
+    alternates: { canonical: `/catalog/${params.category}` },
+    openGraph: { title: category.name, description },
+  };
+}
 
 export default async function CategoryPage({
   params,
