@@ -3,6 +3,8 @@ import { Roboto_Slab, Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { LangProvider } from "@/components/i18n/LangProvider";
+import { getServerLang } from "@/lib/i18n/server";
 
 // Слэб-серив для заголовков — плотный, монолинейный, без тонко-контрастных
 // засечек типичного "ИИ-серива". Отсылает к тиснению клеймом на коже.
@@ -103,12 +105,16 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const lang = getServerLang();
+
   return (
-    <html lang="ru" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
+    <html lang={lang} className={`${display.variable} ${sans.variable} ${mono.variable}`}>
       <body className="flex min-h-screen flex-col bg-parchment font-sans text-ink antialiased">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <LangProvider initialLang={lang}>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </LangProvider>
       </body>
     </html>
   );
