@@ -5,6 +5,7 @@ import { PAID_ORDER_STATUSES } from "@/lib/order-status";
 import AccountTabs from "@/components/account/AccountTabs";
 import type { AnalyticsRow } from "@/components/account/tabs/AnalyticsTab";
 import type { FinanceOrderRow } from "@/components/account/tabs/FinanceTab";
+import type { Message, StoreSettings } from "@/lib/types";
 
 export default async function AccountPage() {
   const supabase = createClient();
@@ -14,7 +15,7 @@ export default async function AccountPage() {
 
   if (!user) redirect("/login?next=/account");
 
-  const [{ data: profile }, { data: orders }] = await Promise.all([
+  const [{ data: profile }, { data: orders }, { data: myMessages }] = await Promise.all([
     supabase
       .from("profiles")
       .select("full_name, phone, role")
@@ -26,6 +27,11 @@ export default async function AccountPage() {
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .limit(5),
+    supabase
+      .from("messages")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: true }),
   ]);
 
   const isAdmin = profile?.role === "admin";
@@ -44,6 +50,9 @@ export default async function AccountPage() {
     adminOrders: any[];
     analyticsRows: AnalyticsRow[];
     financeOrders: FinanceOrderRow[];
+    allMessages: Message[];
+    profiles: Record<string, { full_name: string | null }>;
+    storeSettings: StoreSettings | null;
   } | null = null;
 
   if (isAdmin) {
@@ -57,6 +66,9 @@ export default async function AccountPage() {
       { data: adminOrders },
       { data: analyticsItemRows },
       { data: financeOrdersRaw },
+      { data: allMessagesRaw },
+      { data: allProfiles },
+      { data: storeSettingsRaw },
     ] = await Promise.all([
       supabase.from("products").select("*", { count: "exact", head: true }),
       supabase.from("orders").select("*", { count: "exact", head: true }),
@@ -86,6 +98,9 @@ export default async function AccountPage() {
         .select("id, order_number, created_at, total, status, order_items(quantity, price, product:products(cost))")
         .in("status", PAID_ORDER_STATUSES)
         .order("created_at", { ascending: false }),
+      supabase.from("messages").select("*").order("created_at", { ascending: true }),
+      supabase.from("profiles").select("id, full_name"),
+      supabase.from("store_settings").select("*").eq("id", 1).single(),
     ]);
 
     const { data: revenueRows } = await supabase.from("orders").select("total").eq("status", "paid");
@@ -130,6 +145,11 @@ export default async function AccountPage() {
       };
     });
 
+    const profilesLookup: Record<string, { full_name: string | null }> = {};
+    for (const p of allProfiles ?? []) {
+      profilesLookup[p.id] = { full_name: p.full_name };
+    }
+
     adminData = {
       productsCount: productsCount ?? 0,
       ordersCount: ordersCount ?? 0,
@@ -141,6 +161,9 @@ export default async function AccountPage() {
       adminOrders: adminOrders ?? [],
       analyticsRows,
       financeOrders,
+      allMessages: (allMessagesRaw ?? []) as Message[],
+      profiles: profilesLookup,
+      storeSettings: (storeSettingsRaw as StoreSettings | null) ?? null,
     };
   }
 
@@ -156,6 +179,7 @@ export default async function AccountPage() {
         email={user.email ?? ""}
         orders={orders ?? []}
         isAdmin={isAdmin}
+        myMessages={(myMessages ?? []) as Message[]}
         adminData={adminData}
       />
     </div>
