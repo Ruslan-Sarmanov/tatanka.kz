@@ -47,7 +47,7 @@ export default function FinanceTab({ orders }: { orders: FinanceOrderRow[] }) {
             value={from}
             onChange={(e) => setFrom(e.target.value)}
             className="input-field"
-            style={{ width: "10rem" }}
+            style={{ width: "10rem", maxWidth: "100%" }}
           />
         </div>
         <div>
@@ -57,7 +57,7 @@ export default function FinanceTab({ orders }: { orders: FinanceOrderRow[] }) {
             value={to}
             onChange={(e) => setTo(e.target.value)}
             className="input-field"
-            style={{ width: "10rem" }}
+            style={{ width: "10rem", maxWidth: "100%" }}
           />
         </div>
         {(from || to) && (
@@ -105,34 +105,36 @@ export default function FinanceTab({ orders }: { orders: FinanceOrderRow[] }) {
         </div>
       ) : (
         <div className="overflow-hidden rounded-sm border border-leather-100">
-          <table className="w-full text-sm">
-            <thead className="border-b border-leather-100 bg-leather-50 text-left text-xs uppercase text-leather-500">
-              <tr>
-                <th className="px-4 py-3">Заказ</th>
-                <th className="px-4 py-3">Дата</th>
-                <th className="px-4 py-3">Статус</th>
-                <th className="px-4 py-3">Выручка</th>
-                <th className="px-4 py-3">Себестоимость</th>
-                <th className="px-4 py-3">Прибыль</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-leather-100">
-              {filtered.map((r) => (
-                <tr key={r.id}>
-                  <td className="px-4 py-3 font-medium">№{r.orderNumber}</td>
-                  <td className="px-4 py-3 text-leather-500">
-                    {new Date(r.createdAt).toLocaleDateString("ru-RU")}
-                  </td>
-                  <td className="px-4 py-3">{orderStatusLabel(r.status)}</td>
-                  <td className="px-4 py-3">{r.total.toLocaleString("ru-RU")} ₸</td>
-                  <td className="px-4 py-3 text-leather-500">{r.cost.toLocaleString("ru-RU")} ₸</td>
-                  <td className="px-4 py-3 font-medium text-green-700">
-                    {r.profit.toLocaleString("ru-RU")} ₸
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="border-b border-leather-100 bg-leather-50 text-left text-xs uppercase text-leather-500">
+                <tr>
+                  <th className="px-4 py-3">Заказ</th>
+                  <th className="px-4 py-3">Дата</th>
+                  <th className="px-4 py-3">Статус</th>
+                  <th className="px-4 py-3">Выручка</th>
+                  <th className="px-4 py-3">Себестоимость</th>
+                  <th className="px-4 py-3">Прибыль</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-leather-100">
+                {filtered.map((r) => (
+                  <tr key={r.id}>
+                    <td className="px-4 py-3 font-medium">№{r.orderNumber}</td>
+                    <td className="px-4 py-3 text-leather-500">
+                      {new Date(r.createdAt).toLocaleDateString("ru-RU")}
+                    </td>
+                    <td className="px-4 py-3">{orderStatusLabel(r.status)}</td>
+                    <td className="px-4 py-3">{r.total.toLocaleString("ru-RU")} ₸</td>
+                    <td className="px-4 py-3 text-leather-500">{r.cost.toLocaleString("ru-RU")} ₸</td>
+                    <td className="px-4 py-3 font-medium text-green-700">
+                      {r.profit.toLocaleString("ru-RU")} ₸
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
