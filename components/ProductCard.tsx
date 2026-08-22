@@ -52,10 +52,10 @@ export default function ProductCard({ product }: { product: Product }) {
           Этот ряд — не внутри <Link>, чтобы клик по кнопке не проваливался
           в переход на страницу товара. */}
       <div className="flex items-center justify-between gap-2 px-4 pb-4">
-        <p className="font-mono text-sm text-saddle-500">
+        <p className="whitespace-nowrap font-mono text-sm text-saddle-500">
           {product.price.toLocaleString("ru-RU")} ₸
         </p>
-        <QuickAddButton item={cartItem} compact />
+        <QuickAddButton item={cartItem} compact className="shrink-0" />
       </div>
 
       <FavoriteButton item={cartItem} className="absolute right-3 top-3" />
