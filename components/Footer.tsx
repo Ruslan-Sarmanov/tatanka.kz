@@ -45,6 +45,7 @@ export default async function Footer() {
             <Link href="/account" className="transition hover:text-parchment">Личный кабинет</Link>
             <Link href="/cart" className="transition hover:text-parchment">Корзина</Link>
             <a href="#brand" className="transition hover:text-parchment">О бренде</a>
+            <Link href="/contact" className="transition hover:text-parchment">Контакты</Link>
           </nav>
         </div>
       </div>
