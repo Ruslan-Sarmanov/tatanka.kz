@@ -87,11 +87,11 @@ export default async function ContactPage() {
             по вашим заказам.
           </p>
           {isLoggedIn ? (
-            <Link href="/account" className="btn-primary mt-5 inline-flex">
+            <Link href="/account?tab=feedback" className="btn-primary mt-5 inline-flex">
               Написать в личном кабинете
             </Link>
           ) : (
-            <Link href="/login?next=/account" className="btn-primary mt-5 inline-flex">
+            <Link href={`/login?next=${encodeURIComponent("/account?tab=feedback")}`} className="btn-primary mt-5 inline-flex">
               Войти и написать
             </Link>
           )}
