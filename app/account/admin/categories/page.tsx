@@ -22,7 +22,7 @@ export default async function AdminCategoriesPage() {
           <Link
             key={c.id}
             href={`/account/admin/categories/${c.id}`}
-            className="flex items-center justify-between gap-4 px-4 py-3 text-sm transition hover:bg-saddle-50"
+            className="flex flex-wrap items-center justify-between gap-4 px-4 py-3 text-sm transition hover:bg-saddle-50"
           >
             <span className="font-medium text-ink">{c.name}</span>
             <span className="font-mono text-xs text-saddle-400">/{c.slug}</span>
