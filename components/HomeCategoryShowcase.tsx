@@ -4,6 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ProductCard from "@/components/ProductCard";
+import { useLang } from "@/components/i18n/LangProvider";
 import type { Category, Product } from "@/lib/types";
 
 export default function HomeCategoryShowcase({
@@ -13,14 +14,15 @@ export default function HomeCategoryShowcase({
   categories: Category[];
   products: Product[];
 }) {
+  const { dict } = useLang();
   const featuredThumb = products.find((p) => p.is_featured)?.images?.[0]?.url ?? null;
 
   const tabs = useMemo(
     () => [
-      { id: "featured", label: "Новинки", image: featuredThumb },
+      { id: "featured", label: dict.home.newArrivals, image: featuredThumb },
       ...categories.map((c) => ({ id: c.id, label: c.name, slug: c.slug, image: c.image_url })),
     ],
-    [categories, featuredThumb]
+    [categories, featuredThumb, dict]
   );
 
   const [active, setActive] = useState(tabs[0]?.id ?? "featured");
@@ -41,8 +43,8 @@ export default function HomeCategoryShowcase({
   return (
     <section className="container-page py-16 md:py-24">
       <div className="mb-8">
-        <span className="eyebrow">Каталог</span>
-        <h2 className="mt-2 font-display text-2xl text-ink md:text-3xl">Ассортимент</h2>
+        <span className="eyebrow">{dict.home.assortmentEyebrow}</span>
+        <h2 className="mt-2 font-display text-2xl text-ink md:text-3xl">{dict.home.assortmentTitle}</h2>
         <div className="stitch-line mt-5 w-16" />
       </div>
 
@@ -96,7 +98,7 @@ export default function HomeCategoryShowcase({
 
       {activeProducts.length === 0 ? (
         <div className="card border-dashed py-16 text-center">
-          <p className="text-sm text-leather-500">В этом разделе пока нет товаров.</p>
+          <p className="text-sm text-leather-500">{dict.home.emptySection}</p>
         </div>
       ) : (
         <div className="relative">
@@ -105,7 +107,7 @@ export default function HomeCategoryShowcase({
               <button
                 type="button"
                 onClick={() => scroll(-1)}
-                aria-label="Прокрутить назад"
+                aria-label={dict.common.back}
                 className="absolute -left-4 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-saddle-200 bg-parchment shadow-sm hover:bg-saddle-50 md:flex"
               >
                 ←
@@ -113,7 +115,7 @@ export default function HomeCategoryShowcase({
               <button
                 type="button"
                 onClick={() => scroll(1)}
-                aria-label="Прокрутить вперёд"
+                aria-label={dict.common.more}
                 className="absolute -right-4 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-saddle-200 bg-parchment shadow-sm hover:bg-saddle-50 md:flex"
               >
                 →
@@ -138,7 +140,7 @@ export default function HomeCategoryShowcase({
         href={active === "featured" ? "/catalog" : `/catalog/${activeSlug ?? ""}`}
         className="btn-secondary mt-8 inline-flex"
       >
-        {active === "featured" ? "Весь каталог" : `Все товары раздела «${activeTab?.label}»`}
+        {active === "featured" ? dict.home.wholeCatalog : dict.home.allInSection(activeTab?.label ?? "")}
       </Link>
     </section>
   );
