@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import OrderStatusBadge from "@/components/OrderStatusBadge";
 import AdminPanel from "@/components/account/AdminPanel";
 import FeedbackTab from "@/components/FeedbackTab";
@@ -56,7 +57,12 @@ export default function AccountTabs({
     ...(isAdmin ? [{ id: "admin", label: "Управление магазином" }] : []),
   ] as const;
 
-  const [active, setActive] = useState<(typeof tabs)[number]["id"]>("profile");
+  const searchParams = useSearchParams();
+  const requestedTab = searchParams.get("tab");
+  const initialTab =
+    tabs.find((t) => t.id === requestedTab)?.id ?? "profile";
+
+  const [active, setActive] = useState<(typeof tabs)[number]["id"]>(initialTab);
 
   const unreadFeedbackCount = myMessages.filter(
     (m) => m.sender_role === "admin" && !m.read_by_customer
