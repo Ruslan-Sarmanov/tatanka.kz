@@ -10,7 +10,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login?next=/admin");
+  if (!user) redirect("/login?next=/account/admin");
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -21,9 +21,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (profile?.role !== "admin") redirect("/");
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)]">
+    <div className="flex min-h-[calc(100vh-4rem)] flex-col md:flex-row">
       <AdminSidebar />
-      <div className="flex-1 bg-leather-50 p-8">{children}</div>
+      <div className="flex-1 bg-leather-50 p-5 md:p-8">{children}</div>
     </div>
   );
 }
