@@ -104,3 +104,24 @@ export type CartItem = {
   quantity: number;
   customization?: string;
 };
+
+export type Message = {
+  id: string;
+  user_id: string;
+  order_id: string | null;
+  sender_role: "customer" | "admin";
+  body: string;
+  created_at: string;
+  read_by_admin: boolean;
+  read_by_customer: boolean;
+};
+
+export type StoreSettings = {
+  id: number;
+  contact_phone: string | null;
+  contact_email: string | null;
+  whatsapp: string | null;
+  address: string | null;
+  city: string | null;
+  working_hours: string | null;
+};
