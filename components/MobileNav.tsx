@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useLang } from "@/components/i18n/LangProvider";
+import LanguageToggle from "@/components/i18n/LanguageToggle";
 
 export default function MobileNav({
   categories,
@@ -27,6 +28,9 @@ export default function MobileNav({
 
       {open && (
         <div className="absolute inset-x-0 top-20 border-b border-saddle-100 bg-parchment px-5 py-6 shadow-lg">
+          <div className="mb-4 sm:hidden">
+            <LanguageToggle />
+          </div>
           <nav className="flex flex-col gap-4">
             {categories.map((cat) => (
               <Link
