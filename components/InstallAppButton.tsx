@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLang } from "@/components/i18n/LangProvider";
 
 // Chrome/Edge/Android посылают это событие, когда сайт соответствует
 // критериям PWA (манифест + иконки + https) и установку можно предложить
@@ -13,6 +14,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export default function InstallAppButton({ className = "" }: { className?: string }) {
+  const { dict } = useLang();
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
@@ -52,7 +54,7 @@ export default function InstallAppButton({ className = "" }: { className?: strin
   if (deferredPrompt) {
     return (
       <button type="button" onClick={handleInstall} className={className}>
-        Установить приложение
+        {dict.install.button}
       </button>
     );
   }
@@ -64,7 +66,7 @@ export default function InstallAppButton({ className = "" }: { className?: strin
   if (isIOS) {
     return (
       <p className="mt-4 max-w-xs text-xs leading-relaxed text-parchment/50">
-        Установить на телефон: в Safari нажмите «Поделиться» → «На экран «Домой»»
+        {dict.install.iosHint}
       </p>
     );
   }
