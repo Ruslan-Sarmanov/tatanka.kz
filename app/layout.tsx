@@ -29,10 +29,33 @@ const mono = IBM_Plex_Mono({
   display: "swap",
 });
 
+const SITE_URL = "https://tatanka.kz";
+const SITE_TITLE = "TATANKA.KZ — кожаные аксессуары ручной работы под заказ";
+const SITE_DESCRIPTION =
+  "Кошельки, портмоне, сумки и другие аксессуары из натуральной кожи, изготовленные вручную под заказ в Казахстане.";
+
 export const metadata: Metadata = {
-  title: "TATANKA.KZ — кожаные аксессуары ручной работы под заказ",
-  description:
-    "Кошельки, портмоне, сумки и другие аксессуары из натуральной кожи, изготовленные вручную под заказ в Казахстане.",
+  // metadataBase — без него Next.js не может построить абсолютные ссылки
+  // для og:image/canonical на превью-доменах Vercel, а поисковики и
+  // соцсети требуют именно абсолютные URL в этих тегах.
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_TITLE,
+    // Дочерние страницы задают короткий title ("Кошельки" и т.п.), сюда
+    // автоматически подставится "%s — TATANKA.KZ" — не нужно вручную
+    // дописывать бренд на каждой странице.
+    template: "%s — TATANKA.KZ",
+  },
+  description: SITE_DESCRIPTION,
+  keywords: [
+    "кожаные аксессуары",
+    "кошелек из кожи",
+    "портмоне",
+    "сумки из кожи",
+    "изделия из кожи на заказ",
+    "handmade кожа Казахстан",
+    "Актобе",
+  ],
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
@@ -45,6 +68,29 @@ export const metadata: Metadata = {
       { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
     ],
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  // По умолчанию разрешаем индексацию и переход по ссылкам всем страницам;
+  // приватные/служебные (корзина, кабинет и т.д.) сами переопределяют это
+  // на noindex через собственный metadata в своих page.tsx.
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
+  openGraph: {
+    type: "website",
+    locale: "ru_RU",
+    url: SITE_URL,
+    siteName: "TATANKA.KZ",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [{ url: "/icons/icon-512.png", width: 512, height: 512, alt: "TATANKA.KZ" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: ["/icons/icon-512.png"],
   },
 };
 
