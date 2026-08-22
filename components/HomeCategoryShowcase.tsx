@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import ProductCard from "@/components/ProductCard";
 import type { Category, Product } from "@/lib/types";
 
@@ -12,12 +13,14 @@ export default function HomeCategoryShowcase({
   categories: Category[];
   products: Product[];
 }) {
+  const featuredThumb = products.find((p) => p.is_featured)?.images?.[0]?.url ?? null;
+
   const tabs = useMemo(
     () => [
-      { id: "featured", label: "Новинки" },
-      ...categories.map((c) => ({ id: c.id, label: c.name, slug: c.slug })),
+      { id: "featured", label: "Новинки", image: featuredThumb },
+      ...categories.map((c) => ({ id: c.id, label: c.name, slug: c.slug, image: c.image_url })),
     ],
-    [categories]
+    [categories, featuredThumb]
   );
 
   const [active, setActive] = useState(tabs[0]?.id ?? "featured");
@@ -43,24 +46,39 @@ export default function HomeCategoryShowcase({
         <div className="stitch-line mt-5 w-16" />
       </div>
 
-      {/* Вкладки — Новинки + каждый раздел каталога, объединено в один
-          блок вместо двух отдельных секций. Переключение на клиенте,
-          без перехода со страницы. */}
-      <div className="mb-6 flex flex-wrap gap-2 overflow-x-auto">
-        {tabs.map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            onClick={() => setActive(t.id)}
-            className={`shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition ${
-              active === t.id
-                ? "border-saddle-500 bg-saddle-500 text-parchment"
-                : "border-saddle-200 text-leather-600 hover:bg-saddle-50"
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
+      {/* Вкладки-плитки с фото — как раньше выглядели разделы каталога на
+          главной, только теперь они же и переключают показанные товары.
+          Новинки + каждый раздел, объединено в один блок вместо двух
+          отдельных секций. Переключение на клиенте, без перехода. */}
+      <div className="mb-8 flex gap-4 overflow-x-auto pb-1">
+        {tabs.map((t) => {
+          const isActive = active === t.id;
+          return (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setActive(t.id)}
+              className="flex shrink-0 flex-col items-center gap-2"
+            >
+              <span
+                className={`stitch-frame relative h-20 w-20 overflow-hidden rounded-sm bg-saddle-100 transition md:h-24 md:w-24 ${
+                  isActive ? "ring-2 ring-saddle-500 ring-offset-2 ring-offset-parchment" : "opacity-80 hover:opacity-100"
+                }`}
+              >
+                {t.image ? (
+                  <Image src={t.image} alt={t.label} fill sizes="96px" className="object-cover" unoptimized />
+                ) : (
+                  <div className="flex h-full items-center justify-center bg-saddle-100" />
+                )}
+              </span>
+              <span
+                className={`text-xs font-medium ${isActive ? "text-saddle-600" : "text-leather-500"}`}
+              >
+                {t.label}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {activeProducts.length === 0 ? (
