@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useFavoritesStore, type FavoriteItem } from "@/lib/favorites-store";
+import { useLang } from "@/components/i18n/LangProvider";
 
 // Zustand persist гидратируется из localStorage только после монтирования
 // на клиенте — до этого момента "has" всегда вернёт false и иконка может
@@ -18,6 +19,7 @@ export default function FavoriteButton({
   const [mounted, setMounted] = useState(false);
   const toggle = useFavoritesStore((s) => s.toggle);
   const isFavorite = useFavoritesStore((s) => s.has(item.productId));
+  const { dict } = useLang();
 
   useEffect(() => setMounted(true), []);
   const active = mounted && isFavorite;
@@ -25,7 +27,7 @@ export default function FavoriteButton({
   return (
     <button
       type="button"
-      aria-label={active ? "Убрать из избранного" : "Добавить в избранное"}
+      aria-label={active ? dict.product.removeFromFavorites : dict.product.addToFavorites}
       aria-pressed={active}
       onClick={(e) => {
         e.preventDefault();
