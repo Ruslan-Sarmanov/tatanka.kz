@@ -1,25 +1,83 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import AddToCartForm from "@/components/AddToCartForm";
 import ProductGallery from "@/components/ProductGallery";
 
-export default async function ProductPage({ params }: { params: { slug: string } }) {
+async function getProduct(slug: string) {
   const supabase = createClient();
-
   const { data: product } = await supabase
     .from("products")
     .select("*, images:product_images(*), category:categories(*)")
-    .eq("slug", params.slug)
+    .eq("slug", slug)
     .eq("is_active", true)
     .single();
+  return product;
+}
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const product = await getProduct(params.slug);
+  if (!product) return {};
+
+  const image = [...(product.images ?? [])].sort((a: any, b: any) => a.sort_order - b.sort_order)[0]?.url;
+  const description =
+    product.description ??
+    `${product.name} — натуральная кожа, ручная работа. ${product.price.toLocaleString("ru-RU")} ₸.`;
+
+  return {
+    title: product.name,
+    description,
+    alternates: { canonical: `/product/${product.slug}` },
+    openGraph: {
+      type: "website",
+      title: product.name,
+      description,
+      images: image ? [{ url: image }] : undefined,
+    },
+  };
+}
+
+export default async function ProductPage({ params }: { params: { slug: string } }) {
+  const product = await getProduct(params.slug);
 
   if (!product) notFound();
 
   const sortedImages = [...(product.images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
 
+  // Availability для JSON-LD: сделанное под заказ изделие — MadeToOrder,
+  // явно нулевой отслеживаемый остаток — OutOfStock, иначе — InStock.
+  const availability = product.is_made_to_order
+    ? "https://schema.org/MadeToOrder"
+    : product.stock_quantity === 0
+    ? "https://schema.org/OutOfStock"
+    : "https://schema.org/InStock";
+
+  // Structured data — по этому Google строит расширенные сниппеты в
+  // поиске (цена, наличие, рейтинг) прямо под ссылкой на товар.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description ?? undefined,
+    image: sortedImages.map((img) => img.url),
+    sku: product.slug,
+    brand: { "@type": "Brand", name: "TATANKA" },
+    offers: {
+      "@type": "Offer",
+      url: `https://tatanka.kz/product/${product.slug}`,
+      priceCurrency: "KZT",
+      price: product.price,
+      availability,
+      itemCondition: "https://schema.org/NewCondition",
+    },
+  };
+
   return (
     <div className="container-page py-10 md:py-14">
+      {/* eslint-disable-next-line react/no-danger */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+
       {product.category && (
         <Link
           href={`/catalog/${product.category.slug}`}
