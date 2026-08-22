@@ -29,7 +29,7 @@ export default function QuickAddButton({
         setJustAdded(true);
         setTimeout(() => setJustAdded(false), 1200);
       }}
-      className={`flex items-center justify-center gap-1.5 rounded-sm text-sm font-medium transition ${
+      className={`flex items-center justify-center gap-1.5 whitespace-nowrap rounded-sm text-sm font-medium transition ${
         justAdded
           ? "bg-green-600 text-white"
           : "bg-saddle-500 text-parchment hover:bg-saddle-600"
