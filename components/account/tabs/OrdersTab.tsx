@@ -1,12 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import OrderStatusBadge from "@/components/OrderStatusBadge";
 import DeleteOrderButton from "@/components/admin/DeleteOrderButton";
 import OrderCalendar from "./OrderCalendar";
 import { ORDER_STATUSES } from "@/lib/order-status";
+import { createClient } from "@/lib/supabase/client";
 import type { OrderStatus } from "@/lib/types";
 
 const PAGE_SIZE = 25;
@@ -16,12 +18,21 @@ function toISODate(dateStr: string) {
 }
 
 export default function OrdersTab({ orders }: { orders: any[] }) {
+  const router = useRouter();
+  const supabase = createClient();
+
   const [search, setSearch] = useState("");
   const [statuses, setStatuses] = useState<Set<OrderStatus>>(new Set());
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [calendarDate, setCalendarDate] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  // Массовые действия: выбор нескольких заказов чекбоксами, затем сразу
+  // удалить все выбранные или сменить им статус одной операцией.
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkStatus, setBulkStatus] = useState<OrderStatus>("in_production");
+  const [bulkLoading, setBulkLoading] = useState(false);
 
   const ordersByDate = useMemo(() => {
     const map = new Map<string, number>();
@@ -78,6 +89,62 @@ export default function OrdersTab({ orders }: { orders: any[] }) {
 
   const visible = filtered.slice(0, visibleCount);
   const hasFilters = search || statuses.size > 0 || dateFrom || dateTo;
+
+  function toggleSelect(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  const allVisibleSelected = visible.length > 0 && visible.every((o: any) => selected.has(o.id));
+
+  function toggleSelectAllVisible() {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (allVisibleSelected) {
+        visible.forEach((o: any) => next.delete(o.id));
+      } else {
+        visible.forEach((o: any) => next.add(o.id));
+      }
+      return next;
+    });
+  }
+
+  async function handleBulkDelete() {
+    if (
+      !confirm(
+        `Удалить ${selected.size} ${selected.size === 1 ? "заказ" : "заказов"} безвозвратно? Это действие нельзя отменить.`
+      )
+    )
+      return;
+    setBulkLoading(true);
+    const { error } = await supabase.from("orders").delete().in("id", Array.from(selected));
+    setBulkLoading(false);
+    if (error) {
+      alert(`Не удалось удалить: ${error.message}`);
+      return;
+    }
+    setSelected(new Set());
+    router.refresh();
+  }
+
+  async function handleBulkStatus() {
+    setBulkLoading(true);
+    const { error } = await supabase
+      .from("orders")
+      .update({ status: bulkStatus })
+      .in("id", Array.from(selected));
+    setBulkLoading(false);
+    if (error) {
+      alert(`Не удалось изменить статус: ${error.message}`);
+      return;
+    }
+    setSelected(new Set());
+    router.refresh();
+  }
 
   return (
     <div>
@@ -153,6 +220,62 @@ export default function OrdersTab({ orders }: { orders: any[] }) {
         />
       </div>
 
+      {/* Панель выбора: отметь заказы галочками — сверху появляется, что
+          можно с ними сделать. */}
+      <div className="mb-2 flex flex-wrap items-center gap-3 text-sm">
+        <label className="flex items-center gap-2 text-leather-600">
+          <input
+            type="checkbox"
+            checked={allVisibleSelected}
+            onChange={toggleSelectAllVisible}
+            className="h-4 w-4"
+          />
+          Выбрать все на странице
+        </label>
+
+        {selected.size > 0 && (
+          <div className="flex flex-wrap items-center gap-2 rounded-sm bg-saddle-50 px-3 py-2">
+            <span className="font-medium text-saddle-700">Выбрано: {selected.size}</span>
+
+            <select
+              value={bulkStatus}
+              onChange={(e) => setBulkStatus(e.target.value as OrderStatus)}
+              className="input-field"
+              style={{ width: "10rem", maxWidth: "100%" }}
+            >
+              {ORDER_STATUSES.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={handleBulkStatus}
+              disabled={bulkLoading}
+              className="btn-secondary text-sm"
+            >
+              Применить статус
+            </button>
+
+            <button
+              type="button"
+              onClick={handleBulkDelete}
+              disabled={bulkLoading}
+              className="text-sm text-red-600 underline hover:text-red-700"
+            >
+              Удалить выбранные
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setSelected(new Set())}
+              className="text-sm text-leather-500 underline hover:text-leather-800"
+            >
+              Снять выбор
+            </button>
+          </div>
+        )}
+      </div>
+
       <div className="divide-y divide-leather-100 rounded-sm border border-leather-100">
         {visible.map((o: any) => (
           <div key={o.id} className="relative px-4 py-3 text-sm hover:bg-leather-50">
@@ -162,6 +285,14 @@ export default function OrdersTab({ orders }: { orders: any[] }) {
               aria-label={`Заказ №${o.order_number}`}
             />
             <div className="relative z-10 flex flex-wrap items-center gap-3">
+              <input
+                type="checkbox"
+                checked={selected.has(o.id)}
+                onChange={() => toggleSelect(o.id)}
+                onClick={(e) => e.stopPropagation()}
+                className="h-4 w-4 shrink-0"
+                aria-label={`Выбрать заказ №${o.order_number}`}
+              />
               <span className="font-medium">№{o.order_number}</span>
               <span className="text-leather-600">{o.contact_name}</span>
               <span className="text-leather-500">
@@ -172,7 +303,7 @@ export default function OrdersTab({ orders }: { orders: any[] }) {
               <DeleteOrderButton orderId={o.id} orderNumber={o.order_number} />
             </div>
 
-            <div className="relative z-10 mt-2 flex flex-wrap gap-3">
+            <div className="relative z-10 mt-2 flex flex-wrap gap-3 pl-7">
               {(o.order_items ?? []).map((item: any) => {
                 const sortedImages = [...(item.product?.images ?? [])].sort(
                   (a: any, b: any) => a.sort_order - b.sort_order
