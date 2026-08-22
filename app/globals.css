@@ -81,3 +81,14 @@ body {
   pointer-events: none;
   border: 1px dashed theme("colors.saddle.300"/60%);
 }
+
+/* Прячет системный скроллбар у горизонтально прокручиваемых рядов
+   (вкладки разделов, лента товаров на главной) — прокрутка при этом
+   остаётся полностью рабочей, просто без некрасивой серой полосы снизу. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
