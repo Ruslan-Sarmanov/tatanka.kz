@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
-import ProductCard from "@/components/ProductCard";
+import HomeCategoryShowcase from "@/components/HomeCategoryShowcase";
 
 export default async function HomePage() {
   const supabase = createClient();
@@ -15,9 +15,7 @@ export default async function HomePage() {
       .from("products")
       .select("*, images:product_images(*)")
       .eq("is_active", true)
-      .eq("is_featured", true)
-      .order("created_at", { ascending: false })
-      .limit(8),
+      .order("created_at", { ascending: false }),
   ]);
 
   return (
@@ -58,57 +56,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ---- Разделы каталога ---- */}
-      <section className="container-page py-16 md:py-24">
-        <div className="mb-10 flex items-end justify-between gap-4">
-          <div>
-            <span className="eyebrow">Каталог</span>
-            <h2 className="mt-2 font-display text-2xl text-ink md:text-3xl">Разделы</h2>
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 md:gap-5 lg:grid-cols-6">
-          {(categories ?? []).map((cat) => (
-            <Link
-              key={cat.slug}
-              href={`/catalog/${cat.slug}`}
-              className="stitch-frame group relative aspect-square overflow-hidden rounded-sm bg-saddle-100"
-            >
-              {cat.image_url ? (
-                <Image
-                  src={cat.image_url}
-                  alt={cat.name}
-                  fill
-                  sizes="(max-width: 768px) 50vw, 25vw"
-                  className="object-cover transition duration-500 group-hover:scale-105"
-                />
-              ) : (
-                <div className="flex h-full items-center justify-center bg-saddle-100" />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/5 to-transparent" />
-              <span className="absolute bottom-4 left-4 font-display text-base text-parchment md:text-lg">
-                {cat.name}
-              </span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* ---- Новинки ---- */}
-      {products && products.length > 0 && (
-        <section className="bg-card py-16 md:py-24">
-          <div className="container-page">
-            <div className="mb-10">
-              <span className="eyebrow">Свежая партия</span>
-              <h2 className="mt-2 font-display text-2xl text-ink md:text-3xl">Новинки</h2>
-            </div>
-            <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 md:gap-6">
-              {products.map((p: any) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      <HomeCategoryShowcase categories={categories ?? []} products={(products ?? []) as any} />
 
       {/* ---- О бренде ---- */}
       <section id="brand" className="relative overflow-hidden bg-ink">
