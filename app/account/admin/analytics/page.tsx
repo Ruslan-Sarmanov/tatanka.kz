@@ -78,7 +78,7 @@ export default async function AdminAnalyticsPage({
       <form className="mb-6 flex flex-wrap items-end gap-3" method="GET">
         <div>
           <label className="mb-1 block text-xs text-leather-500">Тип</label>
-          <select name="category" defaultValue={searchParams.category ?? ""} className="input-field" style={{ width: "12rem" }}>
+          <select name="category" defaultValue={searchParams.category ?? ""} className="input-field" style={{ width: "12rem", maxWidth: "100%" }}>
             <option value="">Все типы</option>
             {(categories ?? []).map((c) => (
               <option key={c.slug} value={c.slug}>{c.name}</option>
@@ -92,7 +92,7 @@ export default async function AdminAnalyticsPage({
             name="priceMin"
             defaultValue={searchParams.priceMin ?? ""}
             className="input-field"
-            style={{ width: "7rem" }}
+            style={{ width: "7rem", maxWidth: "100%" }}
           />
         </div>
         <div>
@@ -102,7 +102,7 @@ export default async function AdminAnalyticsPage({
             name="priceMax"
             defaultValue={searchParams.priceMax ?? ""}
             className="input-field"
-            style={{ width: "7rem" }}
+            style={{ width: "7rem", maxWidth: "100%" }}
           />
         </div>
         <button type="submit" className="btn-secondary">Применить</button>
@@ -116,33 +116,35 @@ export default async function AdminAnalyticsPage({
         </div>
       ) : (
         <div className="card overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="border-b border-leather-100 bg-leather-50 text-left text-xs uppercase text-leather-500">
-              <tr>
-                <th className="px-4 py-3">Товар</th>
-                <th className="px-4 py-3">Категория</th>
-                <th className="px-4 py-3">Цена</th>
-                <th className="px-4 py-3">Продано, шт</th>
-                <th className="px-4 py-3">Выручка</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-leather-100">
-              {rows.map((r) => (
-                <tr key={r.productId}>
-                  <td className="flex items-center gap-3 px-4 py-3">
-                    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded bg-leather-100">
-                      {r.image && <Image src={r.image} alt="" fill className="object-cover" unoptimized />}
-                    </div>
-                    <span className="font-medium">{r.name}</span>
-                  </td>
-                  <td className="px-4 py-3 text-leather-500">{r.categoryName}</td>
-                  <td className="px-4 py-3">{r.price.toLocaleString("ru-RU")} ₸</td>
-                  <td className="px-4 py-3 font-medium">{r.qty}</td>
-                  <td className="px-4 py-3 font-medium">{r.revenue.toLocaleString("ru-RU")} ₸</td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="border-b border-leather-100 bg-leather-50 text-left text-xs uppercase text-leather-500">
+                <tr>
+                  <th className="px-4 py-3">Товар</th>
+                  <th className="px-4 py-3">Категория</th>
+                  <th className="px-4 py-3">Цена</th>
+                  <th className="px-4 py-3">Продано, шт</th>
+                  <th className="px-4 py-3">Выручка</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-leather-100">
+                {rows.map((r) => (
+                  <tr key={r.productId}>
+                    <td className="flex items-center gap-3 px-4 py-3">
+                      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded bg-leather-100">
+                        {r.image && <Image src={r.image} alt="" fill className="object-cover" unoptimized />}
+                      </div>
+                      <span className="font-medium">{r.name}</span>
+                    </td>
+                    <td className="px-4 py-3 text-leather-500">{r.categoryName}</td>
+                    <td className="px-4 py-3">{r.price.toLocaleString("ru-RU")} ₸</td>
+                    <td className="px-4 py-3 font-medium">{r.qty}</td>
+                    <td className="px-4 py-3 font-medium">{r.revenue.toLocaleString("ru-RU")} ₸</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
