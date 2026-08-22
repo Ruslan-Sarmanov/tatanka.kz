@@ -6,9 +6,11 @@ import AccountTabs from "@/components/account/AccountTabs";
 import type { AnalyticsRow } from "@/components/account/tabs/AnalyticsTab";
 import type { FinanceOrderRow } from "@/components/account/tabs/FinanceTab";
 import type { Message, StoreSettings } from "@/lib/types";
+import { getServerDictionary } from "@/lib/i18n/server";
 
 export default async function AccountPage() {
   const supabase = createClient();
+  const t = getServerDictionary();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -170,7 +172,7 @@ export default async function AccountPage() {
   return (
     <div className="container-page space-y-6 py-12">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-3xl text-leather-800">Личный кабинет</h1>
+        <h1 className="font-display text-3xl text-leather-800">{t.account.title}</h1>
         <SignOutButton />
       </div>
 
