@@ -17,14 +17,14 @@ export default function BannersTab({ banners }: { banners: Banner[] }) {
           <Link
             key={b.id}
             href={`/account/admin/banners/${b.id}`}
-            className="flex items-center gap-4 px-4 py-3 text-sm hover:bg-leather-50"
+            className="flex flex-wrap items-center gap-4 px-4 py-3 text-sm hover:bg-leather-50"
           >
             <div className="relative h-12 w-24 shrink-0 overflow-hidden rounded bg-leather-100">
               <Image src={b.image_url} alt="" fill className="object-cover" unoptimized />
             </div>
-            <span className="flex-1 font-medium">{b.title || "Без названия"}</span>
-            <span className="max-w-xs truncate font-mono text-xs text-leather-500">{b.link_url}</span>
-            <span className={b.is_active ? "text-green-700" : "text-leather-400"}>
+            <span className="min-w-0 flex-1 font-medium">{b.title || "Без названия"}</span>
+            <span className="max-w-xs shrink truncate font-mono text-xs text-leather-500">{b.link_url}</span>
+            <span className={`shrink-0 ${b.is_active ? "text-green-700" : "text-leather-400"}`}>
               {b.is_active ? "Активен" : "Скрыт"}
             </span>
           </Link>
