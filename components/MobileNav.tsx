@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useLang } from "@/components/i18n/LangProvider";
 
 export default function MobileNav({
   categories,
@@ -11,12 +12,13 @@ export default function MobileNav({
   isLoggedIn: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  const { dict, lang } = useLang();
 
   return (
     <div className="lg:hidden">
       <button
         onClick={() => setOpen(!open)}
-        aria-label={open ? "Закрыть меню" : "Открыть меню"}
+        aria-label={open ? (lang === "kk" ? "Мәзірді жабу" : "Закрыть меню") : (lang === "kk" ? "Мәзірді ашу" : "Открыть меню")}
         className="flex h-9 w-9 flex-col items-center justify-center gap-1.5"
       >
         <span className={`h-px w-5 bg-ink transition ${open ? "translate-y-[3px] rotate-45" : ""}`} />
@@ -42,7 +44,7 @@ export default function MobileNav({
                 onClick={() => setOpen(false)}
                 className="font-display text-lg text-ink transition hover:text-saddle-500"
               >
-                {isLoggedIn ? "Личный кабинет" : "Войти"}
+                {isLoggedIn ? dict.footer.cabinet : dict.header.login}
               </Link>
             </div>
           </nav>
