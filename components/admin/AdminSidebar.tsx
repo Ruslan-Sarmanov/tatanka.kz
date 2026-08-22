@@ -25,14 +25,14 @@ export default async function AdminSidebar() {
     .eq("status", "paid");
 
   return (
-    <aside className="w-56 shrink-0 border-r border-leather-100 bg-white">
+    <aside className="shrink-0 border-b border-leather-100 bg-white md:w-56 md:border-b-0 md:border-r">
       <div className="px-6 py-5 font-display text-lg text-leather-800">Админка</div>
-      <nav className="flex flex-col gap-1 px-3">
+      <nav className="no-scrollbar flex gap-1 overflow-x-auto px-3 pb-3 md:flex-col md:overflow-visible md:pb-0">
         {links.map((l) => (
           <Link
             key={l.href}
             href={l.href}
-            className="flex items-center justify-between rounded px-3 py-2 text-sm text-leather-700 hover:bg-leather-50"
+            className="flex shrink-0 items-center justify-between gap-2 rounded px-3 py-2 text-sm text-leather-700 hover:bg-leather-50"
           >
             <span>{l.label}</span>
             {l.href === "/account/admin/orders" && !!newOrdersCount && (
@@ -42,10 +42,10 @@ export default async function AdminSidebar() {
             )}
           </Link>
         ))}
-        <Link href="/account" className="mt-4 rounded px-3 py-2 text-sm text-leather-500 hover:bg-leather-50">
+        <Link href="/account" className="shrink-0 rounded px-3 py-2 text-sm text-leather-500 hover:bg-leather-50 md:mt-4">
           ← Личный кабинет
         </Link>
-        <Link href="/" className="rounded px-3 py-2 text-sm text-leather-500 hover:bg-leather-50">
+        <Link href="/" className="shrink-0 rounded px-3 py-2 text-sm text-leather-500 hover:bg-leather-50">
           На сайт
         </Link>
       </nav>
