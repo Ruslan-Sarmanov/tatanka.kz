@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import OrderStatusForm from "@/components/admin/OrderStatusForm";
 import OrderStatusBadge from "@/components/OrderStatusBadge";
+import DeleteOrderButton from "@/components/admin/DeleteOrderButton";
 
 export default async function AdminOrderDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient();
@@ -21,7 +22,14 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
           <h1 className="font-display text-2xl text-leather-800">Заказ №{order.order_number}</h1>
           <OrderStatusBadge status={order.status} />
         </div>
-        <OrderStatusForm orderId={order.id} status={order.status} />
+        <div className="flex items-center gap-4">
+          <OrderStatusForm orderId={order.id} status={order.status} />
+          <DeleteOrderButton
+            orderId={order.id}
+            orderNumber={order.order_number}
+            redirectTo="/account/admin/orders"
+          />
+        </div>
       </div>
 
       <div className="card divide-y divide-leather-100">
