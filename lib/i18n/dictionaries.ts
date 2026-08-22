@@ -161,6 +161,10 @@ const dictionaries = {
       feedbackTitle: "Обратная связь",
       feedbackText: "Есть вопрос по заказу или изделию? Напишите нам — отвечаем обычно в течение дня.",
     },
+    install: {
+      button: "Установить приложение",
+      iosHint: "Установить на телефон: в Safari нажмите «Поделиться» → «На экран «Домой»»",
+    },
     langToggle: {
       label: "Язык",
     },
@@ -178,7 +182,7 @@ const dictionaries = {
     },
     header: {
       catalog: "Каталог",
-      cabinet: "Кабинет",
+      cabinet: "Жеке кабинет",
       login: "Кіру",
     },
     footer: {
@@ -317,6 +321,10 @@ const dictionaries = {
       feedbackTitle: "Кері байланыс",
       feedbackText: "Тапсырыс немесе бұйым бойынша сұрағыңыз бар ма? Бізге жазыңыз — әдетте бір күн ішінде жауап береміз.",
     },
+    install: {
+      button: "Қолданбаны орнату",
+      iosHint: "Телефонға орнату: Safari-де «Бөлісу» → «Негізгі экранға қосу» түймесін басыңыз",
+    },
     langToggle: {
       label: "Тіл",
     },
@@ -444,6 +452,7 @@ export type Dictionary = {
     | "feedbackText",
     string
   > & { orderNumber: (num: number) => string };
+  install: Record<"button" | "iosHint", string>;
   langToggle: Record<"label", string>;
 };
 
