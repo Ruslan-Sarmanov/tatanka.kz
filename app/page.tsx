@@ -2,9 +2,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import HomeCategoryShowcase from "@/components/HomeCategoryShowcase";
+import { getServerDictionary } from "@/lib/i18n/server";
 
 export default async function HomePage() {
   const supabase = createClient();
+  const t = getServerDictionary();
 
   const [{ data: categories }, { data: products }] = await Promise.all([
     supabase
@@ -47,23 +49,22 @@ export default async function HomePage() {
         />
         <div className="container-page relative py-20 md:py-28">
           <div className="max-w-xl">
-            <span className="eyebrow text-saddle-300">Ручная работа · Под заказ · Казахстан</span>
+            <span className="eyebrow text-saddle-300">{t.home.heroEyebrow}</span>
             <h1 className="mt-5 font-display text-4xl font-semibold leading-[1.08] text-parchment md:text-6xl">
-              Кожа, которая
+              {t.home.heroTitleLine1}
               <br />
-              служит десятилетиями
+              {t.home.heroTitleLine2}
             </h1>
             <div className="stitch-line mt-6 w-24" style={{ ["--stitch-color" as any]: "#C99A66" }} />
             <p className="mt-6 max-w-md text-[15px] leading-relaxed text-parchment/65">
-              TATANKA — кошельки, портмоне, сумки и другие аксессуары из натуральной кожи растительного
-              дубления. Каждое изделие вырезано, прошито и собрано вручную под ваш заказ.
+              {t.home.heroText}
             </p>
             <div className="mt-9 flex flex-wrap gap-4">
               <Link href="/catalog" className="btn-primary">
-                Смотреть каталог
+                {t.home.viewCatalog}
               </Link>
               <a href="#brand" className="btn-ghost-light">
-                О бренде
+                {t.home.aboutBrand}
               </a>
             </div>
           </div>
@@ -84,18 +85,15 @@ export default async function HomePage() {
             className="h-24 w-24 opacity-90 md:h-40 md:w-40"
           />
           <div className="max-w-xl">
-            <span className="eyebrow text-saddle-300">Наш подход</span>
+            <span className="eyebrow text-saddle-300">{t.home.approachEyebrow}</span>
             <h2 className="mt-3 font-display text-2xl leading-snug text-parchment md:text-3xl">
-              Татанка — древнее слово для бизона: сила, выносливость, материал, который веками
-              служил людям.
+              {t.home.brandTitle}
             </h2>
             <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-parchment/60">
-              Мы работаем с кожей растительного дубления небольшими партиями и по индивидуальным
-              размерам. Никакого конвейера — каждое изделие проходит через руки одного мастера,
-              от раскроя до финальной прошивки.
+              {t.home.brandText}
             </p>
             <Link href="/catalog" className="btn-ghost-light mt-8 inline-flex">
-              Смотреть изделия
+              {t.home.viewItems}
             </Link>
           </div>
         </div>
