@@ -66,13 +66,13 @@ export default function ProductsTab({
           value={search}
           onChange={(e) => { setSearch(e.target.value); setVisibleCount(PAGE_SIZE); }}
           className="input-field"
-          style={{ width: "16rem" }}
+          style={{ width: "16rem", maxWidth: "100%" }}
         />
         <select
           value={categoryId}
           onChange={(e) => { setCategoryId(e.target.value); setVisibleCount(PAGE_SIZE); }}
           className="input-field"
-          style={{ width: "10rem" }}
+          style={{ width: "10rem", maxWidth: "100%" }}
         >
           <option value="">Все категории</option>
           {categories.map((c: any) => (
@@ -83,7 +83,7 @@ export default function ProductsTab({
           value={stockFilter}
           onChange={(e) => { setStockFilter(e.target.value as StockFilter); setVisibleCount(PAGE_SIZE); }}
           className="input-field"
-          style={{ width: "11rem" }}
+          style={{ width: "11rem", maxWidth: "100%" }}
         >
           <option value="">Любой остаток</option>
           <option value="in_stock">В наличии</option>
@@ -111,7 +111,7 @@ export default function ProductsTab({
             <Link
               key={p.id}
               href={`/account/admin/products/${p.id}`}
-              className="flex items-center gap-4 px-4 py-3 text-sm hover:bg-leather-50"
+              className="flex flex-wrap items-center gap-4 px-4 py-3 text-sm hover:bg-leather-50"
             >
               <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded bg-leather-100">
                 {thumb ? (
@@ -122,13 +122,13 @@ export default function ProductsTab({
                   </div>
                 )}
               </div>
-              <span className="flex-1 font-medium">{p.name}</span>
-              <span className="text-leather-500">{p.category?.name ?? "—"}</span>
-              <span>{Number(p.price).toLocaleString("ru-RU")} ₸</span>
-              <span className="w-28 text-right">
+              <span className="min-w-0 flex-1 font-medium">{p.name}</span>
+              <span className="shrink-0 text-leather-500">{p.category?.name ?? "—"}</span>
+              <span className="shrink-0">{Number(p.price).toLocaleString("ru-RU")} ₸</span>
+              <span className="w-28 shrink-0 text-right">
                 <StockBadge qty={p.stock_quantity} />
               </span>
-              <span className={p.is_active ? "text-green-700" : "text-leather-400"}>
+              <span className={`shrink-0 ${p.is_active ? "text-green-700" : "text-leather-400"}`}>
                 {p.is_active ? "Активен" : "Скрыт"}
               </span>
             </Link>
