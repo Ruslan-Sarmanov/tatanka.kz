@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import OrderStatusBadge from "@/components/OrderStatusBadge";
 import AdminPanel from "@/components/account/AdminPanel";
 import FeedbackTab from "@/components/FeedbackTab";
+import { useLang } from "@/components/i18n/LangProvider";
 import type { Category, Banner, Message, StoreSettings } from "@/lib/types";
 import type { AnalyticsRow } from "@/components/account/tabs/AnalyticsTab";
 import type { FinanceOrderRow } from "@/components/account/tabs/FinanceTab";
@@ -47,13 +48,17 @@ export default function AccountTabs({
     storeSettings: StoreSettings | null;
   } | null;
 }) {
+  const { dict, lang } = useLang();
+
   // "Обратная связь" — только у обычных покупателей: у админа для этого
   // есть вкладка "Сообщения" внутри "Управления магазином", где видны
-  // переписки со всеми покупателями сразу.
+  // переписки со всеми покупателями сразу. Сама вкладка "Управление
+  // магазином" НЕ переводится — админка полностью остаётся на русском
+  // независимо от переключателя языка, это осознанное решение.
   const tabs = [
-    { id: "profile", label: "Профиль" },
-    { id: "orders", label: "Последние заказы" },
-    ...(!isAdmin ? [{ id: "feedback", label: "Обратная связь" }] : []),
+    { id: "profile", label: dict.account.tabProfile },
+    { id: "orders", label: dict.account.tabOrders },
+    ...(!isAdmin ? [{ id: "feedback", label: dict.account.tabFeedback }] : []),
     ...(isAdmin ? [{ id: "admin", label: "Управление магазином" }] : []),
   ] as const;
 
@@ -104,15 +109,15 @@ export default function AccountTabs({
         <div className="card p-6">
           <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
             <div>
-              <dt className="text-leather-500">Имя</dt>
+              <dt className="text-leather-500">{dict.account.name}</dt>
               <dd className="text-leather-900">{profile?.full_name || "—"}</dd>
             </div>
             <div>
-              <dt className="text-leather-500">Телефон</dt>
+              <dt className="text-leather-500">{dict.account.phone}</dt>
               <dd className="text-leather-900">{profile?.phone || "—"}</dd>
             </div>
             <div>
-              <dt className="text-leather-500">Email</dt>
+              <dt className="text-leather-500">{dict.account.email}</dt>
               <dd className="text-leather-900">{email}</dd>
             </div>
           </dl>
@@ -122,23 +127,23 @@ export default function AccountTabs({
       {active === "orders" && (
         <div className="card p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-medium text-leather-800">Последние заказы</h2>
+            <h2 className="text-lg font-medium text-leather-800">{dict.account.recentOrders}</h2>
             <Link href="/account/orders" className="text-sm underline text-leather-700">
-              Все заказы
+              {dict.account.allOrders}
             </Link>
           </div>
 
           {orders.length === 0 ? (
-            <p className="text-sm text-leather-500">У вас пока нет заказов.</p>
+            <p className="text-sm text-leather-500">{dict.account.noOrders}</p>
           ) : (
             <ul className="divide-y divide-leather-100">
               {orders.map((o) => (
                 <li key={o.id} className="flex flex-wrap items-center gap-3 py-3 text-sm">
                   <Link href={`/account/orders/${o.id}`} className="underline">
-                    Заказ №{o.order_number}
+                    {dict.account.orderNumber(o.order_number)}
                   </Link>
                   <span className="text-leather-500">
-                    {new Date(o.created_at).toLocaleDateString("ru-RU")}
+                    {new Date(o.created_at).toLocaleDateString(lang === "kk" ? "kk-KZ" : "ru-RU")}
                   </span>
                   <OrderStatusBadge status={o.status} />
                   <span className="ml-auto font-medium">{o.total.toLocaleString("ru-RU")} ₸</span>
