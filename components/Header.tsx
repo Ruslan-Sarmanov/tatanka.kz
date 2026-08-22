@@ -5,9 +5,12 @@ import CartBadge from "@/components/CartBadge";
 import FavoritesBadge from "@/components/FavoritesBadge";
 import MobileNav from "@/components/MobileNav";
 import CatalogMenu from "@/components/CatalogMenu";
+import LanguageToggle from "@/components/i18n/LanguageToggle";
+import { getServerDictionary } from "@/lib/i18n/server";
 
 export default async function Header() {
   const supabase = createClient();
+  const t = getServerDictionary();
 
   const [{ data: categories }, { data: userData }] = await Promise.all([
     supabase
@@ -45,7 +48,8 @@ export default async function Header() {
           <CatalogMenu categories={cats} />
         </nav>
 
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-4">
+          <LanguageToggle />
           <FavoritesBadge />
           <CartBadge />
           {user ? (
@@ -53,14 +57,14 @@ export default async function Header() {
               href="/account"
               className="hidden text-sm font-medium text-ink transition hover:text-saddle-500 sm:inline"
             >
-              Кабинет
+              {t.header.cabinet}
             </Link>
           ) : (
             <Link
               href="/login"
               className="hidden text-sm font-medium text-ink transition hover:text-saddle-500 sm:inline"
             >
-              Войти
+              {t.header.login}
             </Link>
           )}
         </div>
