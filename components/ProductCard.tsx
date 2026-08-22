@@ -1,10 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import type { Product } from "@/lib/types";
 import FavoriteButton from "@/components/FavoriteButton";
 import QuickAddButton from "@/components/QuickAddButton";
+import { useLang } from "@/components/i18n/LangProvider";
 
 export default function ProductCard({ product }: { product: Product }) {
+  const { dict } = useLang();
   const image = product.images?.[0]?.url ?? null;
   const cartItem = {
     productId: product.id,
@@ -28,10 +32,10 @@ export default function ProductCard({ product }: { product: Product }) {
             />
           ) : (
             <div className="flex h-full items-center justify-center font-mono text-xs uppercase tracking-wide text-saddle-400">
-              Фото скоро
+              {dict.product.photoSoon}
             </div>
           )}
-          {product.is_made_to_order && <span className="tag-order absolute left-3 top-3">Под заказ</span>}
+          {product.is_made_to_order && <span className="tag-order absolute left-3 top-3">{dict.product.madeToOrder}</span>}
         </div>
         <div className="p-4 pb-3">
           {/* min-h + line-clamp-2 — название держит одинаковую высоту у
