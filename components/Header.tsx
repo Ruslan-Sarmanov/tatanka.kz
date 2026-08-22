@@ -49,7 +49,9 @@ export default async function Header() {
         </nav>
 
         <div className="flex items-center gap-4">
-          <LanguageToggle />
+          <div className="hidden sm:block">
+            <LanguageToggle />
+          </div>
           <FavoritesBadge />
           <CartBadge />
           {user ? (
