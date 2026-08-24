@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getServerDictionary } from "@/lib/i18n/server";
 
 export default async function PaymentPage({
   searchParams,
@@ -10,6 +11,7 @@ export default async function PaymentPage({
   if (!orderId) notFound();
 
   const supabase = createClient();
+  const t = getServerDictionary();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -26,17 +28,17 @@ export default async function PaymentPage({
 
   return (
     <div className="container-page py-16 text-center">
-      <h1 className="font-display text-3xl text-leather-800">Оплата заказа</h1>
+      <h1 className="font-display text-3xl text-leather-800">{t.checkout.payTitle}</h1>
       <p className="mt-4 text-leather-600">
-        Заказ №{order.order_number} на сумму{" "}
+        {t.checkout.orderSum(String(order.order_number))}{" "}
         <span className="font-semibold">{order.total.toLocaleString("ru-RU")} ₸</span>
       </p>
 
       {order.status === "paid" ? (
-        <p className="mt-6 text-green-700">Заказ уже оплачен.</p>
+        <p className="mt-6 text-green-700">{t.checkout.alreadyPaid}</p>
       ) : (
         <a href={`/api/robokassa/init?order=${order.id}`} className="btn-primary mt-8 inline-flex">
-          Оплатить через Robokassa
+          {t.checkout.payButton}
         </a>
       )}
     </div>
