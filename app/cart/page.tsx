@@ -3,16 +3,18 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useCartStore } from "@/lib/cart-store";
+import { useLang } from "@/components/i18n/LangProvider";
 
 export default function CartPage() {
   const { items, remove, setQuantity, total } = useCartStore();
+  const { dict } = useLang();
 
   if (items.length === 0) {
     return (
       <div className="container-page py-16 text-center">
-        <h1 className="font-display text-2xl text-leather-800">Корзина пуста</h1>
+        <h1 className="font-display text-2xl text-leather-800">{dict.cart.empty}</h1>
         <Link href="/" className="btn-primary mt-6 inline-flex">
-          В каталог
+          {dict.cart.toCatalog}
         </Link>
       </div>
     );
@@ -20,7 +22,7 @@ export default function CartPage() {
 
   return (
     <div className="container-page space-y-6 py-12">
-      <h1 className="font-display text-3xl text-leather-800">Корзина</h1>
+      <h1 className="font-display text-3xl text-leather-800">{dict.cart.title}</h1>
 
       <div className="card divide-y divide-leather-100">
         {items.map((item) => (
@@ -38,7 +40,7 @@ export default function CartPage() {
                 {item.name}
               </Link>
               {item.customization && (
-                <p className="text-sm text-leather-500">Пожелания: {item.customization}</p>
+                <p className="text-sm text-leather-500">{dict.cart.customization}: {item.customization}</p>
               )}
               <p className="text-sm text-leather-600">{item.price.toLocaleString("ru-RU")} ₸</p>
             </div>
@@ -53,16 +55,16 @@ export default function CartPage() {
               className="shrink-0 text-sm text-red-600 underline"
               onClick={() => remove(item.productId)}
             >
-              Удалить
+              {dict.cart.remove}
             </button>
           </div>
         ))}
       </div>
 
       <div className="flex items-center justify-between">
-        <p className="text-xl font-semibold">Итого: {total().toLocaleString("ru-RU")} ₸</p>
+        <p className="text-xl font-semibold">{dict.cart.total}: {total().toLocaleString("ru-RU")} ₸</p>
         <Link href="/checkout" className="btn-primary">
-          Оформить заказ
+          {dict.cart.checkout}
         </Link>
       </div>
     </div>
