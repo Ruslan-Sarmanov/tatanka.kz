@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { verifySuccessSignature } from "@/lib/robokassa";
+import { getServerDictionary } from "@/lib/i18n/server";
 
 // SuccessURL Robokassa — куда браузер пользователя возвращается после успешной оплаты.
 // В кабинете Robokassa: SuccessURL = https://tatanka.kz/checkout/success (метод GET)
@@ -14,6 +15,7 @@ export default function CheckoutSuccessPage({
   searchParams: { InvId?: string; OutSum?: string; SignatureValue?: string };
 }) {
   const { InvId, OutSum, SignatureValue } = searchParams;
+  const t = getServerDictionary();
 
   const isVerified =
     !!InvId &&
@@ -23,22 +25,21 @@ export default function CheckoutSuccessPage({
 
   return (
     <div className="container-page py-20 text-center">
-      <h1 className="font-display text-3xl text-leather-800">Оплата прошла успешно</h1>
+      <h1 className="font-display text-3xl text-leather-800">{t.checkout.successTitle}</h1>
       {isVerified ? (
         <p className="mt-4 text-leather-600">
-          Заказ №{InvId} на сумму {OutSum} ₸ оплачен.
+          {t.checkout.successOrder(InvId!, OutSum!)}
         </p>
       ) : (
         <p className="mt-4 text-leather-600">
-          Спасибо! Как только оплата будет подтверждена, статус заказа обновится в личном
-          кабинете.
+          {t.checkout.successFallback}
         </p>
       )}
       <p className="mt-2 text-leather-600">
-        Мы начнём изготовление вашего изделия и свяжемся с вами по указанным контактам.
+        {t.checkout.successNote}
       </p>
       <Link href="/account/orders" className="btn-primary mt-8 inline-flex">
-        Мои заказы
+        {t.checkout.myOrders}
       </Link>
     </div>
   );
