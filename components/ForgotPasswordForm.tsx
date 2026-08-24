@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useLang } from "@/components/i18n/LangProvider";
 
 export default function ForgotPasswordForm() {
   const supabase = createClient();
+  const { dict } = useLang();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,10 +30,9 @@ export default function ForgotPasswordForm() {
   if (sent) {
     return (
       <div className="card mx-auto max-w-md space-y-3 p-6 text-center">
-        <h1 className="font-display text-2xl text-ink">Проверьте почту</h1>
+        <h1 className="font-display text-2xl text-ink">{dict.auth.checkEmailTitle}</h1>
         <p className="text-sm text-ink/60">
-          Если аккаунт с адресом <span className="font-medium text-ink">{email}</span> существует —
-          мы отправили на него ссылку для восстановления пароля. Перейдите по ней, чтобы задать новый пароль.
+          {dict.auth.checkEmailText(email)}
         </p>
       </div>
     );
@@ -40,12 +41,12 @@ export default function ForgotPasswordForm() {
   return (
     <form onSubmit={handleSubmit} className="card mx-auto max-w-md space-y-4 p-6">
       <div>
-        <h1 className="font-display text-2xl text-ink">Восстановление пароля</h1>
-        <p className="mt-1 text-sm text-ink/60">Укажите email — пришлём ссылку для сброса пароля.</p>
+        <h1 className="font-display text-2xl text-ink">{dict.auth.forgotTitle}</h1>
+        <p className="mt-1 text-sm text-ink/60">{dict.auth.forgotHint}</p>
       </div>
 
       <div>
-        <label className="mb-1 block text-sm text-ink/70">Email</label>
+        <label className="mb-1 block text-sm text-ink/70">{dict.auth.email}</label>
         <input
           type="email"
           className="input-field"
@@ -58,11 +59,11 @@ export default function ForgotPasswordForm() {
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       <button type="submit" disabled={loading} className="btn-primary w-full">
-        {loading ? "Отправляем…" : "Отправить ссылку"}
+        {loading ? dict.auth.sending : dict.auth.sendLink}
       </button>
 
       <p className="text-center text-sm text-ink/60">
-        Вспомнили пароль? <a className="underline" href="/login">Войти</a>
+        {dict.auth.rememberedPassword} <a className="underline" href="/login">{dict.auth.login}</a>
       </p>
     </form>
   );
