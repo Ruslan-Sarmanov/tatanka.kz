@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useLang } from "@/components/i18n/LangProvider";
 
 export default function AuthForm({ mode }: { mode: "login" | "register" }) {
   const router = useRouter();
   const params = useSearchParams();
   const supabase = createClient();
+  const { dict } = useLang();
 
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -44,13 +46,13 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
   return (
     <form onSubmit={handleSubmit} className="card mx-auto max-w-md space-y-4 p-6">
       <h1 className="font-display text-2xl text-ink">
-        {mode === "login" ? "Вход в кабинет" : "Регистрация"}
+        {mode === "login" ? dict.auth.loginTitle : dict.auth.registerTitle}
       </h1>
 
       {mode === "register" && (
         <>
           <div>
-            <label className="mb-1 block text-sm text-ink/70">Имя</label>
+            <label className="mb-1 block text-sm text-ink/70">{dict.auth.name}</label>
             <input
               className="input-field"
               value={fullName}
@@ -59,19 +61,19 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm text-ink/70">Телефон</label>
+            <label className="mb-1 block text-sm text-ink/70">{dict.auth.phone}</label>
             <input
               className="input-field"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="+7 7__ ___ __ __"
+              placeholder={dict.auth.phonePlaceholder}
             />
           </div>
         </>
       )}
 
       <div>
-        <label className="mb-1 block text-sm text-ink/70">Email</label>
+        <label className="mb-1 block text-sm text-ink/70">{dict.auth.email}</label>
         <input
           type="email"
           className="input-field"
@@ -83,10 +85,10 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
 
       <div>
         <div className="mb-1 flex items-center justify-between">
-          <label className="text-sm text-ink/70">Пароль</label>
+          <label className="text-sm text-ink/70">{dict.auth.password}</label>
           {mode === "login" && (
             <a href="/forgot-password" className="text-xs text-saddle-500 underline">
-              Забыли пароль?
+              {dict.auth.forgotPassword}
             </a>
           )}
         </div>
@@ -103,14 +105,14 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       <button type="submit" disabled={loading} className="btn-primary w-full">
-        {loading ? "Подождите…" : mode === "login" ? "Войти" : "Зарегистрироваться"}
+        {loading ? dict.auth.pleaseWait : mode === "login" ? dict.auth.login : dict.auth.register}
       </button>
 
       <p className="text-center text-sm text-ink/60">
         {mode === "login" ? (
-          <>Нет аккаунта? <a className="underline" href="/register">Зарегистрироваться</a></>
+          <>{dict.auth.noAccount} <a className="underline" href="/register">{dict.auth.register}</a></>
         ) : (
-          <>Уже есть аккаунт? <a className="underline" href="/login">Войти</a></>
+          <>{dict.auth.haveAccount} <a className="underline" href="/login">{dict.auth.login}</a></>
         )}
       </p>
     </form>
