@@ -4,20 +4,22 @@ import Link from "next/link";
 import Image from "next/image";
 import { useFavoritesStore } from "@/lib/favorites-store";
 import { useCartStore } from "@/lib/cart-store";
+import { useLang } from "@/components/i18n/LangProvider";
 
 export default function FavoritesPage() {
   const { items, remove } = useFavoritesStore();
   const addToCart = useCartStore((s) => s.add);
+  const { dict } = useLang();
 
   if (items.length === 0) {
     return (
       <div className="container-page py-16 text-center">
-        <h1 className="font-display text-2xl text-leather-800">В избранном пока пусто</h1>
+        <h1 className="font-display text-2xl text-leather-800">{dict.product.favoritesEmpty}</h1>
         <p className="mt-2 text-leather-500">
-          Нажмите на сердечко на карточке товара, чтобы сохранить его сюда.
+          {dict.product.favoritesEmptyHint}
         </p>
         <Link href="/" className="btn-primary mt-6 inline-flex">
-          В каталог
+          {dict.cart.toCatalog}
         </Link>
       </div>
     );
@@ -25,7 +27,7 @@ export default function FavoritesPage() {
 
   return (
     <div className="container-page space-y-6 py-12">
-      <h1 className="font-display text-3xl text-leather-800">Избранное</h1>
+      <h1 className="font-display text-3xl text-leather-800">{dict.product.favoritesTitle}</h1>
 
       <div className="card divide-y divide-leather-100">
         {items.map((item) => (
@@ -58,13 +60,13 @@ export default function FavoritesPage() {
                 })
               }
             >
-              В корзину
+              {dict.product.addToCart}
             </button>
             <button
               className="shrink-0 text-sm text-red-600 underline"
               onClick={() => remove(item.productId)}
             >
-              Убрать
+              {dict.product.remove}
             </button>
           </div>
         ))}
