@@ -48,18 +48,19 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
       </Link>
 
-      {/* Цена и кнопка — всегда в одной строке, друг напротив друга.
-          Раньше кнопка просто шла следующим блоком под названием, и из-за
-          разной длины названий (одна строка / две строки) съезжала то
-          выше, то ниже у разных карточек в сетке. Теперь оба элемента —
-          в одном flex-ряду с justify-between, положение всегда одинаковое.
-          Этот ряд — не внутри <Link>, чтобы клик по кнопке не проваливался
-          в переход на страницу товара. */}
-      <div className="flex items-center justify-between gap-2 px-4 pb-4">
+      {/* Цена и кнопка. На узких карточках (мобильный 2-колоночный грид —
+          там на каждую карточку остаётся всего ~155px) цена и кнопка
+          физически не помещаются в одну строку и текст кнопки обрезался
+          за край карточки. Поэтому по умолчанию — друг под другом на всю
+          ширину, и только от sm-экрана, где карточки становятся шире,
+          встают рядом через justify-between. Этот блок — не внутри
+          <Link>, чтобы клик по кнопке не проваливался в переход на
+          страницу товара. */}
+      <div className="flex flex-col gap-2 px-4 pb-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="whitespace-nowrap font-mono text-sm text-saddle-500">
           {product.price.toLocaleString("ru-RU")} ₸
         </p>
-        <QuickAddButton item={cartItem} compact className="shrink-0" />
+        <QuickAddButton item={cartItem} compact className="w-full sm:w-auto sm:shrink-0" />
       </div>
 
       <FavoriteButton item={cartItem} className="absolute right-3 top-3" />
