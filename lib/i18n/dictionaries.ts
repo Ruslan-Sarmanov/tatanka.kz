@@ -98,6 +98,10 @@ const dictionaries = {
       increaseQty: "Увеличить количество",
       addToCartFull: "Добавить в корзину",
       goToCart: "Перейти в корзину",
+      favoritesTitle: "Избранное",
+      favoritesEmpty: "В избранном пока пусто",
+      favoritesEmptyHint: "Нажмите на сердечко на карточке товара, чтобы сохранить его сюда.",
+      remove: "Убрать",
     },
     cart: {
       title: "Корзина",
@@ -171,6 +175,38 @@ const dictionaries = {
     install: {
       button: "Установить приложение",
       iosHint: "Установить на телефон: в Safari нажмите «Поделиться» → «На экран «Домой»»",
+    },
+    auth: {
+      loginTitle: "Вход в кабинет",
+      registerTitle: "Регистрация",
+      name: "Имя",
+      phone: "Телефон",
+      phonePlaceholder: "+7 7__ ___ __ __",
+      email: "Email",
+      password: "Пароль",
+      forgotPassword: "Забыли пароль?",
+      pleaseWait: "Подождите…",
+      login: "Войти",
+      register: "Зарегистрироваться",
+      noAccount: "Нет аккаунта?",
+      haveAccount: "Уже есть аккаунт?",
+      forgotTitle: "Восстановление пароля",
+      forgotHint: "Укажите email — пришлём ссылку для сброса пароля.",
+      sendLink: "Отправить ссылку",
+      sending: "Отправляем…",
+      rememberedPassword: "Вспомнили пароль?",
+      checkEmailTitle: "Проверьте почту",
+      resetTitle: "Новый пароль",
+      newPassword: "Новый пароль",
+      savePassword: "Сохранить пароль",
+      saving: "Сохраняем…",
+      passwordChangedTitle: "Пароль изменён",
+      redirecting: "Переносим вас в личный кабинет…",
+      checkingLinkTitle: "Проверяем ссылку…",
+      checkingLinkText: "Если страница долго не открывается — возможно, ссылка из письма устарела.",
+      requestNew: "Запросить новую",
+      checkEmailText: (email: string) =>
+        `Если аккаунт с адресом ${email} существует — мы отправили на него ссылку для восстановления пароля. Перейдите по ней, чтобы задать новый пароль.`,
     },
     langToggle: {
       label: "Язык",
@@ -265,6 +301,10 @@ const dictionaries = {
       increaseQty: "Санды көбейту",
       addToCartFull: "Себетке қосу",
       goToCart: "Себетке өту",
+      favoritesTitle: "Таңдаулылар",
+      favoritesEmpty: "Таңдаулылар әзірге бос",
+      favoritesEmptyHint: "Оны осында сақтау үшін тауар карточкасындағы жүрекшені басыңыз.",
+      remove: "Алып тастау",
     },
     cart: {
       title: "Себет",
@@ -339,6 +379,38 @@ const dictionaries = {
       button: "Қолданбаны орнату",
       iosHint: "Телефонға орнату: Safari-де «Бөлісу» → «Негізгі экранға қосу» түймесін басыңыз",
     },
+    auth: {
+      loginTitle: "Кабинетке кіру",
+      registerTitle: "Тіркелу",
+      name: "Аты",
+      phone: "Телефон",
+      phonePlaceholder: "+7 7__ ___ __ __",
+      email: "Email",
+      password: "Құпия сөз",
+      forgotPassword: "Құпия сөзді ұмыттыңыз ба?",
+      pleaseWait: "Күте тұрыңыз…",
+      login: "Кіру",
+      register: "Тіркелу",
+      noAccount: "Аккаунтыңыз жоқ па?",
+      haveAccount: "Аккаунтыңыз бар ма?",
+      forgotTitle: "Құпия сөзді қалпына келтіру",
+      forgotHint: "Email көрсетіңіз — оған құпия сөзді қалпына келтіру сілтемесін жібереміз.",
+      sendLink: "Сілтемені жіберу",
+      sending: "Жіберілуде…",
+      rememberedPassword: "Құпия сөзді есіңізге түсірдіңіз бе?",
+      checkEmailTitle: "Поштаны тексеріңіз",
+      resetTitle: "Жаңа құпия сөз",
+      newPassword: "Жаңа құпия сөз",
+      savePassword: "Құпия сөзді сақтау",
+      saving: "Сақталуда…",
+      passwordChangedTitle: "Құпия сөз өзгертілді",
+      redirecting: "Сізді жеке кабинетке бағыттаудамыз…",
+      checkingLinkTitle: "Сілтеме тексерілуде…",
+      checkingLinkText: "Егер бет ұзақ уақыт ашылмаса — хаттағы сілтеменің мерзімі өтіп кеткен болуы мүмкін.",
+      requestNew: "Жаңасын сұрау",
+      checkEmailText: (email: string) =>
+        `Егер ${email} мекенжайымен аккаунт бар болса — оған құпия сөзді қалпына келтіру сілтемесін жібердік. Жаңа құпия сөз орнату үшін сілтеме бойынша өтіңіз.`,
+    },
     langToggle: {
       label: "Тіл",
     },
@@ -410,7 +482,11 @@ export type Dictionary = {
     | "decreaseQty"
     | "increaseQty"
     | "addToCartFull"
-    | "goToCart",
+    | "goToCart"
+    | "favoritesTitle"
+    | "favoritesEmpty"
+    | "favoritesEmptyHint"
+    | "remove",
     string
   > & { leadTimeDays: (days: number) => string };
   cart: Record<"title" | "empty" | "toCatalog" | "remove" | "total" | "checkout" | "customization", string>;
@@ -473,6 +549,37 @@ export type Dictionary = {
     string
   > & { orderNumber: (num: number) => string };
   install: Record<"button" | "iosHint", string>;
+  auth: Record<
+    | "loginTitle"
+    | "registerTitle"
+    | "name"
+    | "phone"
+    | "phonePlaceholder"
+    | "email"
+    | "password"
+    | "forgotPassword"
+    | "pleaseWait"
+    | "login"
+    | "register"
+    | "noAccount"
+    | "haveAccount"
+    | "forgotTitle"
+    | "forgotHint"
+    | "sendLink"
+    | "sending"
+    | "rememberedPassword"
+    | "checkEmailTitle"
+    | "resetTitle"
+    | "newPassword"
+    | "savePassword"
+    | "saving"
+    | "passwordChangedTitle"
+    | "redirecting"
+    | "checkingLinkTitle"
+    | "checkingLinkText"
+    | "requestNew",
+    string
+  > & { checkEmailText: (email: string) => string };
   langToggle: Record<"label", string>;
 };
 
