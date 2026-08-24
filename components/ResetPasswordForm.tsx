@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useLang } from "@/components/i18n/LangProvider";
 
 export default function ResetPasswordForm() {
   const supabase = createClient();
   const router = useRouter();
+  const { dict } = useLang();
 
   const [ready, setReady] = useState(false);
   const [password, setPassword] = useState("");
@@ -49,8 +51,8 @@ export default function ResetPasswordForm() {
   if (done) {
     return (
       <div className="card mx-auto max-w-md space-y-2 p-6 text-center">
-        <h1 className="font-display text-2xl text-ink">Пароль изменён</h1>
-        <p className="text-sm text-ink/60">Переносим вас в личный кабинет…</p>
+        <h1 className="font-display text-2xl text-ink">{dict.auth.passwordChangedTitle}</h1>
+        <p className="text-sm text-ink/60">{dict.auth.redirecting}</p>
       </div>
     );
   }
@@ -58,11 +60,11 @@ export default function ResetPasswordForm() {
   if (!ready) {
     return (
       <div className="card mx-auto max-w-md space-y-2 p-6 text-center">
-        <h1 className="font-display text-2xl text-ink">Проверяем ссылку…</h1>
+        <h1 className="font-display text-2xl text-ink">{dict.auth.checkingLinkTitle}</h1>
         <p className="text-sm text-ink/60">
-          Если страница долго не открывается — возможно, ссылка из письма устарела.{" "}
+          {dict.auth.checkingLinkText}{" "}
           <a href="/forgot-password" className="underline">
-            Запросить новую
+            {dict.auth.requestNew}
           </a>
           .
         </p>
@@ -72,10 +74,10 @@ export default function ResetPasswordForm() {
 
   return (
     <form onSubmit={handleSubmit} className="card mx-auto max-w-md space-y-4 p-6">
-      <h1 className="font-display text-2xl text-ink">Новый пароль</h1>
+      <h1 className="font-display text-2xl text-ink">{dict.auth.resetTitle}</h1>
 
       <div>
-        <label className="mb-1 block text-sm text-ink/70">Новый пароль</label>
+        <label className="mb-1 block text-sm text-ink/70">{dict.auth.newPassword}</label>
         <input
           type="password"
           className="input-field"
@@ -89,7 +91,7 @@ export default function ResetPasswordForm() {
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       <button type="submit" disabled={loading} className="btn-primary w-full">
-        {loading ? "Сохраняем…" : "Сохранить пароль"}
+        {loading ? dict.auth.saving : dict.auth.savePassword}
       </button>
     </form>
   );
