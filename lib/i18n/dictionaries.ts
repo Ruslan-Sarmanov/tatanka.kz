@@ -93,6 +93,11 @@ const dictionaries = {
       photoSoon: "Фото скоро",
       removeFromFavorites: "Убрать из избранного",
       addToFavorites: "Добавить в избранное",
+      customizationFullLabel: "Пожелания к изделию (размер, цвет, гравировка)",
+      decreaseQty: "Уменьшить количество",
+      increaseQty: "Увеличить количество",
+      addToCartFull: "Добавить в корзину",
+      goToCart: "Перейти в корзину",
     },
     cart: {
       title: "Корзина",
@@ -128,6 +133,8 @@ const dictionaries = {
       failTitle: "Оплата не прошла",
       failText: "Платёж не был завершён. Попробуйте ещё раз или свяжитесь с нами, если проблема повторяется.",
       tryAgain: "Попробовать снова",
+      alreadyPaid: "Заказ уже оплачен.",
+      orderSum: (num: string) => `Заказ №${num} на сумму`,
     },
     contact: {
       eyebrow: "Связаться с нами",
@@ -253,6 +260,11 @@ const dictionaries = {
       photoSoon: "Фото жақында",
       removeFromFavorites: "Таңдаулылардан алып тастау",
       addToFavorites: "Таңдаулыларға қосу",
+      customizationFullLabel: "Бұйымға тілектер (өлшем, түс, гравировка)",
+      decreaseQty: "Санды азайту",
+      increaseQty: "Санды көбейту",
+      addToCartFull: "Себетке қосу",
+      goToCart: "Себетке өту",
     },
     cart: {
       title: "Себет",
@@ -288,6 +300,8 @@ const dictionaries = {
       failTitle: "Төлем өтпеді",
       failText: "Төлем аяқталмады. Қайта көріңіз немесе мәселе қайталанса, бізбен хабарласыңыз.",
       tryAgain: "Қайта көру",
+      alreadyPaid: "Тапсырыс төленген.",
+      orderSum: (num: string) => `№${num} тапсырыс, сомасы`,
     },
     contact: {
       eyebrow: "Бізбен байланысыңыз",
@@ -391,7 +405,12 @@ export type Dictionary = {
     | "customizationPlaceholder"
     | "photoSoon"
     | "removeFromFavorites"
-    | "addToFavorites",
+    | "addToFavorites"
+    | "customizationFullLabel"
+    | "decreaseQty"
+    | "increaseQty"
+    | "addToCartFull"
+    | "goToCart",
     string
   > & { leadTimeDays: (days: number) => string };
   cart: Record<"title" | "empty" | "toCatalog" | "remove" | "total" | "checkout" | "customization", string>;
@@ -417,9 +436,10 @@ export type Dictionary = {
     | "myOrders"
     | "failTitle"
     | "failText"
-    | "tryAgain",
+    | "tryAgain"
+    | "alreadyPaid",
     string
-  > & { successOrder: (num: string, sum: string) => string };
+  > & { successOrder: (num: string, sum: string) => string; orderSum: (num: string) => string };
   contact: Record<
     | "eyebrow"
     | "title"
