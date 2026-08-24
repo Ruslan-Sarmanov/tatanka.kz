@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import type { ProductImage } from "@/lib/types";
+import { useLang } from "@/components/i18n/LangProvider";
 
 export default function ProductGallery({
   images,
@@ -13,6 +14,7 @@ export default function ProductGallery({
 }) {
   const [active, setActive] = useState(0);
   const current = images[active];
+  const { dict } = useLang();
 
   return (
     <div>
@@ -28,7 +30,7 @@ export default function ProductGallery({
           />
         ) : (
           <div className="flex h-full items-center justify-center font-mono text-xs uppercase tracking-wide text-saddle-400">
-            Фото скоро
+            {dict.product.photoSoon}
           </div>
         )}
       </div>
