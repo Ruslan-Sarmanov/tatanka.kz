@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/ProductCard";
 import CatalogFilters from "@/components/CatalogFilters";
+import { getServerDictionary } from "@/lib/i18n/server";
 
 export const metadata: Metadata = {
   title: "Каталог",
@@ -24,6 +25,7 @@ export default async function CatalogPage({
   };
 }) {
   const supabase = createClient();
+  const t = getServerDictionary();
 
   const [{ data: categories }, { data: allActiveProducts }] = await Promise.all([
     supabase
@@ -71,13 +73,13 @@ export default async function CatalogPage({
     <div className="pb-16">
       <div className="container-page pt-8">
         <Link href="/" className="text-sm text-ink/60 transition hover:text-saddle-500">
-          ← Главная
+          ← {t.common.home}
         </Link>
       </div>
 
       <div className="container-page mt-4">
-        <span className="eyebrow">Каталог</span>
-        <h1 className="mt-1.5 font-display text-3xl text-ink sm:text-4xl">Все изделия</h1>
+        <span className="eyebrow">{t.catalog.eyebrow}</span>
+        <h1 className="mt-1.5 font-display text-3xl text-ink sm:text-4xl">{t.catalog.title}</h1>
         <div className="stitch-line mt-6 w-16" />
       </div>
 
@@ -90,7 +92,7 @@ export default async function CatalogPage({
 
         {!products || products.length === 0 ? (
           <div className="card border-dashed py-16 text-center">
-            <p className="text-sm text-ink/50">По этому фильтру пока ничего не нашлось.</p>
+            <p className="text-sm text-ink/50">{t.catalog.empty}</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 md:gap-6">
