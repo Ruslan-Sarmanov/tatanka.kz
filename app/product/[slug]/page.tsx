@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import AddToCartForm from "@/components/AddToCartForm";
 import ProductGallery from "@/components/ProductGallery";
+import { getServerDictionary } from "@/lib/i18n/server";
 
 async function getProduct(slug: string) {
   const supabase = createClient();
@@ -40,6 +41,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 export default async function ProductPage({ params }: { params: { slug: string } }) {
   const product = await getProduct(params.slug);
+  const t = getServerDictionary();
 
   if (!product) notFound();
 
@@ -102,7 +104,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
           {product.is_made_to_order && (
             <div className="tag-order mt-4">
-              Под заказ · ~{product.lead_time_days ?? 14} дней
+              {t.product.madeToOrder} · {t.product.leadTimeDays(product.lead_time_days ?? 14)}
             </div>
           )}
 
@@ -114,22 +116,22 @@ export default async function ProductPage({ params }: { params: { slug: string }
             <dl className="mt-6 max-w-md divide-y divide-leather-100 border-y border-leather-100 text-sm">
               {product.material && (
                 <div className="flex justify-between py-2">
-                  <dt className="text-ink/50">Материал</dt>
+                  <dt className="text-ink/50">{t.product.material}</dt>
                   <dd className="text-ink/80">{product.material}</dd>
                 </div>
               )}
               {product.color && (
                 <div className="flex justify-between py-2">
-                  <dt className="text-ink/50">Цвет</dt>
+                  <dt className="text-ink/50">{t.product.color}</dt>
                   <dd className="text-ink/80">{product.color}</dd>
                 </div>
               )}
               {product.gender && (
                 <div className="flex justify-between py-2">
-                  <dt className="text-ink/50">Для кого</dt>
+                  <dt className="text-ink/50">{t.product.forWhom}</dt>
                   <dd className="text-ink/80">
                     {
-                      { men: "Для него", women: "Для неё", unisex: "Унисекс" }[
+                      { men: t.catalog.men, women: t.catalog.women, unisex: t.catalog.unisex }[
                         product.gender as "men" | "women" | "unisex"
                       ]
                     }
