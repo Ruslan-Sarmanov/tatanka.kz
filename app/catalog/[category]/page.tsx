@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/ProductCard";
 import PromoBanners from "@/components/PromoBanners";
+import { getServerDictionary } from "@/lib/i18n/server";
 
 export async function generateMetadata({
   params,
@@ -37,6 +38,7 @@ export default async function CategoryPage({
   params: { category: string };
 }) {
   const supabase = createClient();
+  const t = getServerDictionary();
 
   const { data: category } = await supabase
     .from("categories")
@@ -64,12 +66,12 @@ export default async function CategoryPage({
     <div className="pb-16">
       <div className="container-page pt-8">
         <Link href="/" className="text-sm text-ink/60 transition hover:text-saddle-500">
-          ← Главная
+          ← {t.common.home}
         </Link>
       </div>
 
       <div className="container-page mt-4">
-        <span className="eyebrow">Каталог</span>
+        <span className="eyebrow">{t.catalog.eyebrow}</span>
         <h1 className="mt-1.5 font-display text-3xl text-ink sm:text-4xl">{category.name}</h1>
         {category.description && <p className="mt-2 max-w-xl text-ink/60">{category.description}</p>}
         <div className="stitch-line mt-6 w-16" />
@@ -83,7 +85,7 @@ export default async function CategoryPage({
       <div className="container-page mt-10">
         {!products || products.length === 0 ? (
           <div className="card border-dashed py-16 text-center">
-            <p className="text-sm text-ink/50">В этом разделе пока нет товаров — загляните позже.</p>
+            <p className="text-sm text-ink/50">{t.catalog.categoryEmpty}</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 md:grid-cols-4 md:gap-6">
