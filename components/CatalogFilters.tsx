@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useLang } from "@/components/i18n/LangProvider";
 
 // Не используем .input-field здесь намеренно: этот класс задаёт
 // width: 100% через @apply, и в скомпилированном CSS его правило
@@ -24,6 +25,7 @@ export default function CatalogFilters({
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { dict } = useLang();
 
   const activeCategory = searchParams.get("category") ?? "";
   const activeMaterial = searchParams.get("material") ?? "";
@@ -64,7 +66,7 @@ export default function CatalogFilters({
         value={activeCategory}
         onChange={(e) => updateParam("category", e.target.value)}
       >
-        <option value="">Тип</option>
+        <option value="">{dict.catalog.typeFilter}</option>
         {categories.map((c) => (
           <option key={c.slug} value={c.slug}>{c.name}</option>
         ))}
@@ -75,10 +77,10 @@ export default function CatalogFilters({
         value={activeGender}
         onChange={(e) => updateParam("gender", e.target.value)}
       >
-        <option value="">Для кого</option>
-        <option value="men">Для него</option>
-        <option value="women">Для неё</option>
-        <option value="unisex">Унисекс</option>
+        <option value="">{dict.catalog.genderFilter}</option>
+        <option value="men">{dict.catalog.men}</option>
+        <option value="women">{dict.catalog.women}</option>
+        <option value="unisex">{dict.catalog.unisex}</option>
       </select>
 
       {materials.length > 0 && (
@@ -87,7 +89,7 @@ export default function CatalogFilters({
           value={activeMaterial}
           onChange={(e) => updateParam("material", e.target.value)}
         >
-          <option value="">Материал</option>
+          <option value="">{dict.catalog.materialFilter}</option>
           {materials.map((m) => (
             <option key={m} value={m}>{m}</option>
           ))}
@@ -100,7 +102,7 @@ export default function CatalogFilters({
           value={activeColor}
           onChange={(e) => updateParam("color", e.target.value)}
         >
-          <option value="">Цвет</option>
+          <option value="">{dict.catalog.colorFilter}</option>
           {colors.map((c) => (
             <option key={c} value={c}>{c}</option>
           ))}
@@ -111,7 +113,7 @@ export default function CatalogFilters({
         <input
           type="text"
           inputMode="numeric"
-          placeholder="Цена от"
+          placeholder={dict.catalog.from}
           className={`${controlClass} w-24`}
           value={priceMin}
           onChange={(e) => setPriceMin(e.target.value.replace(/[^0-9]/g, ""))}
@@ -121,7 +123,7 @@ export default function CatalogFilters({
         <input
           type="text"
           inputMode="numeric"
-          placeholder="до"
+          placeholder={dict.catalog.to}
           className={`${controlClass} w-20`}
           value={priceMax}
           onChange={(e) => setPriceMax(e.target.value.replace(/[^0-9]/g, ""))}
@@ -134,7 +136,7 @@ export default function CatalogFilters({
         onClick={applyPriceRange}
         className="h-9 rounded-sm border border-saddle-300 px-3 text-sm font-medium text-ink transition hover:bg-saddle-100"
       >
-        Применить
+        {dict.common.apply}
       </button>
 
       {hasFilters && (
@@ -147,7 +149,7 @@ export default function CatalogFilters({
           }}
           className="text-sm text-ink/50 underline hover:text-ink"
         >
-          Сбросить
+          {dict.common.reset}
         </button>
       )}
     </div>
