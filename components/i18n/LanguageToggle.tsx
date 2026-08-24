@@ -9,7 +9,7 @@ export default function LanguageToggle() {
     <div
       role="group"
       aria-label="Выбор языка сайта"
-      className="flex items-center overflow-hidden rounded-full border border-saddle-200 text-xs font-medium"
+      className="inline-flex w-fit items-center overflow-hidden rounded-full border border-saddle-200 text-xs font-medium"
     >
       <button
         type="button"
