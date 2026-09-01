@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import OrderStatusBadge from "@/components/OrderStatusBadge";
 import AdminPanel from "@/components/account/AdminPanel";
 import FeedbackTab from "@/components/FeedbackTab";
+import EditProfileForm from "@/components/account/EditProfileForm";
 import { useLang } from "@/components/i18n/LangProvider";
 import type { Category, Banner, Message, StoreSettings } from "@/lib/types";
 import type { AnalyticsRow } from "@/components/account/tabs/AnalyticsTab";
@@ -121,6 +122,7 @@ export default function AccountTabs({
               <dd className="text-leather-900">{email}</dd>
             </div>
           </dl>
+          <EditProfileForm initial={{ full_name: profile?.full_name ?? null, phone: profile?.phone ?? null }} />
         </div>
       )}
 
