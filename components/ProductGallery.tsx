@@ -27,6 +27,7 @@ export default function ProductGallery({
             sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover"
             priority
+            unoptimized
           />
         ) : (
           <div className="flex h-full items-center justify-center font-mono text-xs uppercase tracking-wide text-saddle-400">
@@ -45,7 +46,7 @@ export default function ProductGallery({
                 i === active ? "border-saddle-500" : "border-saddle-100 opacity-70 hover:opacity-100"
               }`}
             >
-              <Image src={img.url} alt="" fill sizes="64px" className="object-cover" />
+              <Image src={img.url} alt="" fill sizes="64px" className="object-cover" unoptimized />
             </button>
           ))}
         </div>
