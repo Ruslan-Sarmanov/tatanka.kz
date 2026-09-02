@@ -43,6 +43,7 @@ export default function PromoBanners({ banners }: { banners: Banner[] }) {
               sizes="100vw"
               priority={i === 0}
               className="object-contain"
+              unoptimized
             />
           </Link>
         ))}
