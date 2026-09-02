@@ -34,7 +34,7 @@ export default function FavoritesPage() {
           <div key={item.productId} className="flex flex-wrap items-center gap-4 p-4">
             <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded bg-leather-100">
               {item.image && (
-                <Image src={item.image} alt={item.name} fill className="object-cover" />
+                <Image src={item.image} alt={item.name} fill className="object-cover" unoptimized />
               )}
             </div>
             {/* min-w-0 — без этого длинное название не могло сжаться меньше
