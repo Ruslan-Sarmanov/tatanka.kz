@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import { verifyResultSignature } from "@/lib/robokassa";
+import { notifyAdmin } from "@/lib/notify";
 
 // ResultURL — Robokassa вызывает этот адрес со своего сервера (не браузер пользователя),
 // поэтому используем admin-клиент (service role), а не сессию пользователя.
@@ -34,6 +35,21 @@ async function handle(request: Request) {
   }
 
   const supabase = createAdminClient();
+
+  const { data: existing } = await supabase
+    .from("orders")
+    .select("id, order_number, status, total, contact_name, contact_phone, delivery_city, delivery_address")
+    .eq("order_number", Number(invId))
+    .maybeSingle();
+
+  // Robokassa может повторить вызов ResultURL. Если заказ уже оплачен или
+  // даже взят в работу — ничего не трогаем (иначе статус «В изготовлении»
+  // откатился бы обратно на «Оплачен», а владелец получил бы второе письмо).
+  const alreadyHandled = ["paid", "in_production", "shipped", "completed"];
+  if (existing && alreadyHandled.includes(existing.status)) {
+    return new NextResponse(`OK${invId}`);
+  }
+
   const { error } = await supabase
     .from("orders")
     .update({ status: "paid", payment_id: invId })
@@ -41,6 +57,18 @@ async function handle(request: Request) {
 
   if (error) {
     return new NextResponse("db error", { status: 500 });
+  }
+
+  if (existing) {
+    await notifyAdmin(
+      `Заказ №${existing.order_number} оплачен — ${Number(existing.total).toLocaleString("ru-RU")} ₸`,
+      [
+        "Оплата получена, заказ можно запускать в работу.",
+        `Клиент: ${existing.contact_name}`,
+        `Телефон: ${existing.contact_phone}`,
+        `Доставка: ${existing.delivery_city}, ${existing.delivery_address}`,
+      ].join("\n")
+    );
   }
 
   // Robokassa требует ответ строго в формате "OK{InvId}"
