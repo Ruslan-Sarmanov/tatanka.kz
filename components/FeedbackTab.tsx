@@ -27,20 +27,19 @@ export default function FeedbackTab({ initialMessages }: { initialMessages: Mess
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Сообщение уходит через серверный маршрут: он и сохраняет его в базу,
+  // и отправляет владельцу уведомление на почту/в Telegram.
   async function handleSend(body: string) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return;
+    const res = await fetch("/api/messages/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ body }),
+    });
+    if (!res.ok) return;
 
-    const { data, error } = await supabase
-      .from("messages")
-      .insert({ user_id: user.id, sender_role: "customer", body })
-      .select()
-      .single();
-
-    if (!error && data) {
-      setMessages((prev) => [...prev, data as Message]);
+    const { message } = await res.json();
+    if (message) {
+      setMessages((prev) => [...prev, message as Message]);
       router.refresh();
     }
   }
