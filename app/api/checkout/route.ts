@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { notifyAdmin } from "@/lib/notify";
 
 export async function POST(request: Request) {
   const supabase = createClient();
@@ -75,6 +76,30 @@ export async function POST(request: Request) {
       });
     }
   }
+
+  // Сообщаем владельцу о новом заказе. Заказ в этот момент ещё не оплачен —
+  // о факте оплаты придёт отдельное уведомление из вебхука Robokassa.
+  const itemLines = items.map(
+    (i: any) =>
+      `• ${i.name} × ${i.quantity} — ${(i.price * i.quantity).toLocaleString("ru-RU")} ₸` +
+      (i.customization ? ` (пожелания: ${i.customization})` : "")
+  );
+  await notifyAdmin(
+    `Новый заказ №${order.order_number} — ${total.toLocaleString("ru-RU")} ₸`,
+    [
+      "Статус: ожидает оплаты",
+      `Клиент: ${contactName}`,
+      `Телефон: ${contactPhone}`,
+      `Email: ${contactEmail}`,
+      `Доставка: ${city}, ${address}`,
+      comment ? `Комментарий: ${comment}` : null,
+      "",
+      "Состав заказа:",
+      ...itemLines,
+    ]
+      .filter((l) => l !== null)
+      .join("\n")
+  );
 
   return NextResponse.json({ orderId: order.id, total });
 }
